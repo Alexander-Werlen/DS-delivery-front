@@ -3,11 +3,14 @@ import {
   Routes, Route
 } from 'react-router-dom'
 
+import { Toaster } from "@/components/ui/toaster"
+
 import NavBar from './components/NavBar'
 import ClientesSection from './components/clientes/ClientesSection'
 
 function App() {
   return (
+    <>
     <Router>
       <NavBar />
       <div className='container m-auto'>
@@ -20,6 +23,8 @@ function App() {
         </Routes>
       </div>
     </Router>
+    <Toaster />
+    </>
   )
 }
 
