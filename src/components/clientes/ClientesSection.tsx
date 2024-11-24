@@ -91,10 +91,12 @@ function ClientesSection() {
         triggerFetchClientes()
     }, [])
 
+    const datosTabla = listaClientes 
+
     return (
         <div className="mt-2">
             <h1 className="mt-5 text-2xl font-bold">TABLA CLIENTES</h1>
-            <DataTable data={listaClientes}/>
+            <DataTable data={datosTabla}/>
             
             <CrearClienteDialog />
         </div>

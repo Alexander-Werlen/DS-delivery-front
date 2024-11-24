@@ -22,8 +22,16 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "../generales/dialog"
+
+import {Cliente} from "./tableClientes"
+import { useEffect } from "react"
+
+interface EditarClienteDialogProps {
+    open: boolean,
+    clienteData: Cliente,
+    closeEditDialog: () => void
+}
 
 const formSchema = z.object({
     nombre: z.string(),
@@ -43,20 +51,27 @@ const formSchema = z.object({
     }),
 })
 
-function CrearClienteDialog() {
+function EditarClienteDialog({open, clienteData, closeEditDialog}: EditarClienteDialogProps) {
     // 1. Define your form.
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            nombre: "",
-            apellido: "",
-            email: "",
-            cuit: "",
-            direccion: "",
-            lat: 0,
-            lng: 0
+            id: clienteData.id,
+            nombre: clienteData.nombre,
+            apellido: clienteData.apellido,
+            email: clienteData.email,
+            cuit: clienteData.cuit,
+            direccion: clienteData.direccion,
+            lat: clienteData.lat,
+            lng: clienteData.lng
         },
     })
+
+    useEffect(() => {
+        form.reset(clienteData)
+    }, [open])
+    
+    //form.reset(clienteData)
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
@@ -64,13 +79,10 @@ function CrearClienteDialog() {
         console.log(values)
     }
     return (
-        <Dialog>
-        <DialogTrigger asChild>
-            <Button className="mr-2 w-40">CREAR CLIENTE</Button>
-        </DialogTrigger>
+        <Dialog open={open} onOpenChange={open? closeEditDialog : () => {}}>
         <DialogContent className="max-h-screen overflow-y-auto">
             <DialogHeader>
-            <DialogTitle>CREAR CLIENTE</DialogTitle>
+            <DialogTitle>EDITAR CLIENTE</DialogTitle>
             <DialogDescription>
             Completa los campos con la información del cliente
             </DialogDescription>
@@ -86,7 +98,7 @@ function CrearClienteDialog() {
                     <FormItem>
                     <FormLabel>Nombre</FormLabel>
                     <FormControl>
-                        <Input required placeholder="" {...field} />
+                        <Input required {...field} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>
@@ -183,5 +195,5 @@ function CrearClienteDialog() {
     )
 }
   
-export default CrearClienteDialog
+export default EditarClienteDialog
   

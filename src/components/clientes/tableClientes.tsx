@@ -33,6 +33,11 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+import EditarClienteDialog from "./EditarClienteDialog.tsx"
+import EliminarClienteDialog from "./EliminarClienteDialog.tsx"
+
+import { useState } from "react"
+
 export type Cliente = {
   id: number,
   nombre: string,
@@ -44,175 +49,214 @@ export type Cliente = {
   lng: number
 }
 
-export const columns: ColumnDef<Cliente>[] = [
-  {
-    accessorKey: "id",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Id
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("id")}</div>
-    ),
-    enableSorting: true,
-    enableHiding: false,
-    filterFn: "equalsString"
-  },
-  {
-    accessorKey: "nombre",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Nombre
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("nombre")}</div>
-    ),
-  },
-  {
-    accessorKey: "apellido",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Apellido
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("apellido")}</div>
-    ),
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "cuit",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          CUIT
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("cuit")}</div>,
-  },
-  {
-    accessorKey: "direccion",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Dirección
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("direccion")}</div>,
-  },
-  {
-    accessorKey: "lat",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Lat
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("lat")}</div>,
-  },
-  {
-    accessorKey: "lng",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Lng
-          <ArrowUpDown />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("lng")}</div>,
-  },
-  
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const cliente = row.original
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() => console.log(cliente.id)}
-            >
-              Editar
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => console.log(cliente.id)}
-            >
-              Eliminar
-            </DropdownMenuItem>
-            
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
-  },
-]
-
 interface DataTableProps {
   data: Cliente[]
 }
 
 export function DataTable({data}: DataTableProps) {
+  
+  const [editClienteDialogData, setEditClienteDialogData] = useState<{open: boolean, cliente: Cliente}>({
+    open: false,
+    cliente: {
+      id: -1,
+      nombre: "",
+      apellido: "",
+      cuit: "",
+      email: "",
+      direccion: "",
+      lat: 0,
+      lng: 0
+    }
+  })
+
+  const closeEditDialog = () => {
+    setEditClienteDialogData(self => {return {open: false, cliente: self.cliente}})
+  }
+
+  const [eliminarClienteDialogData, setEliminarClienteDialogData] = useState<{open: boolean, cliente: Cliente}>({
+    open: false,
+    cliente: {
+      id: -1,
+      nombre: "",
+      apellido: "",
+      cuit: "",
+      email: "",
+      direccion: "",
+      lat: 0,
+      lng: 0
+    }
+  })
+
+  const closeEliminarDialog = () => {
+    setEliminarClienteDialogData(self => {return {open: false, cliente: self.cliente}})
+  }
+
+
+  //table logic
+  const columns: ColumnDef<Cliente>[] = [
+    {
+      accessorKey: "id",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Id
+            <ArrowUpDown />
+          </Button>
+        )
+      },
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("id")}</div>
+      ),
+      enableSorting: true,
+      enableHiding: false,
+      filterFn: "equalsString"
+    },
+    {
+      accessorKey: "nombre",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Nombre
+            <ArrowUpDown />
+          </Button>
+        )
+      },
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("nombre")}</div>
+      ),
+    },
+    {
+      accessorKey: "apellido",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Apellido
+            <ArrowUpDown />
+          </Button>
+        )
+      },
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("apellido")}</div>
+      ),
+    },
+    {
+      accessorKey: "email",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Email
+            <ArrowUpDown />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    },
+    {
+      accessorKey: "cuit",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            CUIT
+            <ArrowUpDown />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("cuit")}</div>,
+    },
+    {
+      accessorKey: "direccion",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Dirección
+            <ArrowUpDown />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("direccion")}</div>,
+    },
+    {
+      accessorKey: "lat",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Lat
+            <ArrowUpDown />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("lat")}</div>,
+    },
+    {
+      accessorKey: "lng",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Lng
+            <ArrowUpDown />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("lng")}</div>,
+    },
+    
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const cliente = row.original
+  
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => setEditClienteDialogData({open: true, cliente: cliente})}
+              >
+                Editar
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setEliminarClienteDialogData({open: true, cliente: cliente})}
+              >
+                Eliminar
+              </DropdownMenuItem>
+              
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      },
+    },
+  ]
+
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -241,6 +285,7 @@ export function DataTable({data}: DataTableProps) {
   })
 
   return (
+    <>
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
@@ -250,7 +295,7 @@ export function DataTable({data}: DataTableProps) {
             table.getColumn("id")?.setFilterValue(event.target.value)
           }
           className="max-w-40 mr-2"
-        />
+          />
         <Input
           placeholder="Filter nombre..."
           value={(table.getColumn("nombre")?.getFilterValue() as string) ?? ""}
@@ -258,7 +303,7 @@ export function DataTable({data}: DataTableProps) {
             table.getColumn("nombre")?.setFilterValue(event.target.value)
           }
           className="max-w-40 mr-2"
-        />
+          />
         <Input
           placeholder="Filter apellido..."
           value={(table.getColumn("apellido")?.getFilterValue() as string) ?? ""}
@@ -266,7 +311,7 @@ export function DataTable({data}: DataTableProps) {
             table.getColumn("apellido")?.setFilterValue(event.target.value)
           }
           className="max-w-40 mr-2"
-        />
+          />
         <Input
           placeholder="Filter cuit..."
           value={(table.getColumn("cuit")?.getFilterValue() as string) ?? ""}
@@ -274,7 +319,7 @@ export function DataTable({data}: DataTableProps) {
             table.getColumn("cuit")?.setFilterValue(event.target.value)
           }
           className="max-w-40 mr-2"
-        />
+          />
         <Input
           placeholder="Filter dirección..."
           value={(table.getColumn("direccion")?.getFilterValue() as string) ?? ""}
@@ -282,7 +327,7 @@ export function DataTable({data}: DataTableProps) {
             table.getColumn("direccion")?.setFilterValue(event.target.value)
           }
           className="max-w-40 mr-2"
-        />
+          />
         <Input
           placeholder="Filter emails..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
@@ -290,7 +335,7 @@ export function DataTable({data}: DataTableProps) {
             table.getColumn("email")?.setFilterValue(event.target.value)
           }
           className="max-w-40 mr-2"
-        />
+          />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -304,12 +349,12 @@ export function DataTable({data}: DataTableProps) {
               .map((column) => {
                 return (
                   <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) =>
+                    column.toggleVisibility(!!value)
+                  }
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
@@ -329,9 +374,9 @@ export function DataTable({data}: DataTableProps) {
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   )
                 })}
@@ -342,8 +387,8 @@ export function DataTable({data}: DataTableProps) {
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                key={row.id}
+                data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="text-center">
@@ -360,7 +405,7 @@ export function DataTable({data}: DataTableProps) {
                 <TableCell
                   colSpan={columns.length}
                   className="h-24 text-center"
-                >
+                  >
                   No results.
                 </TableCell>
               </TableRow>
@@ -375,7 +420,7 @@ export function DataTable({data}: DataTableProps) {
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-          >
+            >
             Previous
           </Button>
           <Button
@@ -383,11 +428,14 @@ export function DataTable({data}: DataTableProps) {
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-          >
+            >
             Next
           </Button>
         </div>
       </div>
     </div>
+    <EditarClienteDialog open={editClienteDialogData.open} clienteData={editClienteDialogData.cliente} closeEditDialog={closeEditDialog}/>
+    <EliminarClienteDialog open={eliminarClienteDialogData.open} clienteData={eliminarClienteDialogData.cliente} closeEliminarDialog={closeEliminarDialog}/>
+    </>
   )
 }
