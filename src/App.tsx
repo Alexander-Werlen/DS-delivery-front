@@ -7,6 +7,8 @@ import { Toaster } from "@/components/ui/toaster"
 
 import NavBar from './components/NavBar'
 import ClientesSection from './components/clientes/ClientesSection'
+import VendedoresSection from './components/vendedores/VendedoresSection'
+import ItemsMenuSection from './components/itemsmenu/ItemsMenuSection'
 
 function App() {
   return (
@@ -16,8 +18,8 @@ function App() {
       <div className='container m-auto'>
         <Routes>
           <Route path="/clientes" element={<ClientesSection />} />
-          <Route path="/vendedores" element={<>vendedores</>} />
-          <Route path="/itemmenus" element={<>itemmenus</>} />
+          <Route path="/vendedores" element={<VendedoresSection />} />
+          <Route path="/itemmenus" element={<ItemsMenuSection />} />
           <Route path="/pedidos" element={<>pedidos</>} />
           
         </Routes>

@@ -24,19 +24,18 @@ import {
     DialogTitle,
 } from "../generales/dialog"
 
-import {Cliente} from "./tableClientes"
+import {Vendedor} from "./tableVendedores"
 import { useEffect } from "react"
 
-interface EditarClienteDialogProps {
+interface EditarVendedorDialogProps {
     open: boolean,
-    clienteData: Cliente,
+    vendedorData: Vendedor,
     closeEditDialog: () => void,
     triggerFetchData: () => void
 }
 
 const formSchema = z.object({
     nombre: z.string(),
-    apellido: z.string(),
     email: z.string().email(),
     cuit: z.string().min(5, {
         message: "CUIT is too short.",
@@ -52,28 +51,27 @@ const formSchema = z.object({
     }),
 })
 
-function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchData}: EditarClienteDialogProps) {
+function EditarVendedorDialog({open, vendedorData, closeEditDialog, triggerFetchData}: EditarVendedorDialogProps) {
 
     // 1. Define your form.
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            id: clienteData.id,
-            nombre: clienteData.nombre,
-            apellido: clienteData.apellido,
-            email: clienteData.email,
-            cuit: clienteData.cuit,
-            direccion: clienteData.direccion,
-            lat: clienteData.lat,
-            lng: clienteData.lng
+            id: vendedorData.id,
+            nombre: vendedorData.nombre,
+            email: vendedorData.email,
+            cuit: vendedorData.cuit,
+            direccion: vendedorData.direccion,
+            lat: vendedorData.lat,
+            lng: vendedorData.lng
         },
     })
 
     useEffect(() => {
-        form.reset(clienteData)
+        form.reset(vendedorData)
     }, [open])
     
-    //form.reset(clienteData)
+    //form.reset(vendedorData)
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
@@ -88,9 +86,9 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
         <Dialog open={open} onOpenChange={open? closeEditDialog : () => {}}>
         <DialogContent className="max-h-screen overflow-y-auto">
             <DialogHeader>
-            <DialogTitle>EDITAR CLIENTE</DialogTitle>
+            <DialogTitle>EDITAR VENDEDOR</DialogTitle>
             <DialogDescription>
-            Completa los campos con la información del cliente
+            Completa los campos con la información del vendedor
             </DialogDescription>
             </DialogHeader>
 
@@ -105,19 +103,6 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
                     <FormLabel>Nombre</FormLabel>
                     <FormControl>
                         <Input required {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                <FormField
-                control={form.control}
-                name="apellido"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Apellido</FormLabel>
-                    <FormControl>
-                        <Input required placeholder="" {...field} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>
@@ -201,5 +186,5 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
     )
 }
   
-export default EditarClienteDialog
+export default EditarVendedorDialog
   

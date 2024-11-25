@@ -22,21 +22,12 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
+    DialogTrigger,
 } from "../generales/dialog"
-
-import {Cliente} from "./tableClientes"
-import { useEffect } from "react"
-
-interface EditarClienteDialogProps {
-    open: boolean,
-    clienteData: Cliente,
-    closeEditDialog: () => void,
-    triggerFetchData: () => void
-}
+import { useState } from "react"
 
 const formSchema = z.object({
     nombre: z.string(),
-    apellido: z.string(),
     email: z.string().email(),
     cuit: z.string().min(5, {
         message: "CUIT is too short.",
@@ -52,45 +43,45 @@ const formSchema = z.object({
     }),
 })
 
-function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchData}: EditarClienteDialogProps) {
+interface CrearVendedorDialogProps {
+    triggerFetchData: () => void
+}
+
+function CrearVendedorDialog({triggerFetchData}: CrearVendedorDialogProps) {
+    const [open, setOpen] = useState(false)
 
     // 1. Define your form.
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            id: clienteData.id,
-            nombre: clienteData.nombre,
-            apellido: clienteData.apellido,
-            email: clienteData.email,
-            cuit: clienteData.cuit,
-            direccion: clienteData.direccion,
-            lat: clienteData.lat,
-            lng: clienteData.lng
+            nombre: "",
+            email: "",
+            cuit: "",
+            direccion: "",
+            lat: 0,
+            lng: 0
         },
     })
-
-    useEffect(() => {
-        form.reset(clienteData)
-    }, [open])
-    
-    //form.reset(clienteData)
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
 
-        //Actualizar los datos de la tabla
-        triggerFetchData()
         console.log(values)
-        closeEditDialog()
+        //actualizar datos de la tabla
+        triggerFetchData()
+        setOpen(false)
     }
     return (
-        <Dialog open={open} onOpenChange={open? closeEditDialog : () => {}}>
+        <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+            <Button className="mr-2 w-40">CREAR VENDEDOR</Button>
+        </DialogTrigger>
         <DialogContent className="max-h-screen overflow-y-auto">
             <DialogHeader>
-            <DialogTitle>EDITAR CLIENTE</DialogTitle>
+            <DialogTitle>CREAR VENDEDOR</DialogTitle>
             <DialogDescription>
-            Completa los campos con la información del cliente
+            Completa los campos con la información del vendedor
             </DialogDescription>
             </DialogHeader>
 
@@ -103,19 +94,6 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>Nombre</FormLabel>
-                    <FormControl>
-                        <Input required {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                <FormField
-                control={form.control}
-                name="apellido"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Apellido</FormLabel>
                     <FormControl>
                         <Input required placeholder="" {...field} />
                     </FormControl>
@@ -188,7 +166,7 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
                     </FormItem>
                 )}
                 />
-                <Button type="submit" className="float-left w-32">EDITAR</Button>
+                <Button type="submit" className="float-left w-32">CREAR</Button>
                 <DialogClose asChild className="float-right">
                     <Button type="button" className="w-32">
                     CANCELAR
@@ -201,5 +179,5 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
     )
 }
   
-export default EditarClienteDialog
+export default CrearVendedorDialog
   

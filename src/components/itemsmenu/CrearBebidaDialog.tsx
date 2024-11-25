@@ -25,30 +25,26 @@ import {
     DialogTrigger,
 } from "../generales/dialog"
 import { useState } from "react"
+import { Checkbox } from "../ui/checkbox"
 
 const formSchema = z.object({
     nombre: z.string(),
-    apellido: z.string(),
-    email: z.string().email(),
-    cuit: z.string().min(5, {
-        message: "CUIT is too short.",
-    }).includes("-", 
-        {message: "Invalid CUIT format."}
-    ),
-    direccion: z.string(),
-    lat: z.coerce.number({
-        invalid_type_error: "Lat must be a number.",
-    }),
-    lng: z.coerce.number({
-        invalid_type_error: "Lng must be a number.",
-    }),
+    descripcion: z.string(),
+    precio: z.coerce.number().positive(),
+    vendedor: z.coerce.number(),
+    esAptoVegano: z.boolean(),
+    esAptoCeliaco: z.boolean(),
+    volumen: z.coerce.number(),
+    graduacionAlcoholica: z.coerce.number(),
+    esAlcoholica: z.boolean(),
+    esGaseosa: z.boolean()
 })
 
-interface CrearClienteDialogProps {
+interface CrearBebidaDialogProps {
     triggerFetchData: () => void
 }
 
-function CrearClienteDialog({triggerFetchData}: CrearClienteDialogProps) {
+function CrearBebidaDialog({triggerFetchData}: CrearBebidaDialogProps) {
     const [open, setOpen] = useState(false)
 
     // 1. Define your form.
@@ -56,12 +52,15 @@ function CrearClienteDialog({triggerFetchData}: CrearClienteDialogProps) {
         resolver: zodResolver(formSchema),
         defaultValues: {
             nombre: "",
-            apellido: "",
-            email: "",
-            cuit: "",
-            direccion: "",
-            lat: 0,
-            lng: 0
+            descripcion: "",
+            precio: 0,
+            vendedor: 0,
+            esAptoVegano: false,
+            esAptoCeliaco: false,
+            volumen: 0,
+            graduacionAlcoholica: 0,
+            esAlcoholica: false,
+            esGaseosa: false
         },
     })
     // 2. Define a submit handler.
@@ -77,16 +76,15 @@ function CrearClienteDialog({triggerFetchData}: CrearClienteDialogProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-            <Button className="mr-2 w-40">CREAR CLIENTE</Button>
+            <Button className="mr-2 w-40">CREAR ITEM BEBIDA</Button>
         </DialogTrigger>
         <DialogContent className="max-h-screen overflow-y-auto">
             <DialogHeader>
-            <DialogTitle>CREAR CLIENTE</DialogTitle>
+            <DialogTitle>CREAR ITEM BEBIDA</DialogTitle>
             <DialogDescription>
-            Completa los campos con la información del cliente
+            Completa los campos con la información del item bebida
             </DialogDescription>
             </DialogHeader>
-
 
             <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -105,10 +103,23 @@ function CrearClienteDialog({triggerFetchData}: CrearClienteDialogProps) {
                 />
                 <FormField
                 control={form.control}
-                name="apellido"
+                name="descripcion"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Apellido</FormLabel>
+                    <FormLabel>Descripcion</FormLabel>
+                    <FormControl>
+                        <Input placeholder="" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="precio"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Precio</FormLabel>
                     <FormControl>
                         <Input required placeholder="" {...field} />
                     </FormControl>
@@ -118,10 +129,10 @@ function CrearClienteDialog({triggerFetchData}: CrearClienteDialogProps) {
                 />
                 <FormField
                 control={form.control}
-                name="email"
+                name="vendedor"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Vendedor</FormLabel>
                     <FormControl>
                         <Input required placeholder="" {...field} />
                     </FormControl>
@@ -131,10 +142,10 @@ function CrearClienteDialog({triggerFetchData}: CrearClienteDialogProps) {
                 />
                 <FormField
                 control={form.control}
-                name="cuit"
+                name="volumen"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>CUIT</FormLabel>
+                    <FormLabel>Volumen</FormLabel>
                     <FormControl>
                         <Input required placeholder="" {...field} />
                     </FormControl>
@@ -144,10 +155,10 @@ function CrearClienteDialog({triggerFetchData}: CrearClienteDialogProps) {
                 />
                 <FormField
                 control={form.control}
-                name="direccion"
+                name="graduacionAlcoholica"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Direccion</FormLabel>
+                    <FormLabel>Graduacion Alcoholica</FormLabel>
                     <FormControl>
                         <Input required placeholder="" {...field} />
                     </FormControl>
@@ -157,30 +168,85 @@ function CrearClienteDialog({triggerFetchData}: CrearClienteDialogProps) {
                 />
                 <FormField
                 control={form.control}
-                name="lat"
+                name="esAptoVegano"
                 render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Lat</FormLabel>
+                    <FormItem className="flex flex-row items-start space-x-2 space-y-0 ">
                     <FormControl>
-                        <Input required placeholder="" {...field} />
+                        <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        />
                     </FormControl>
+                    <div className="space-y-1 leading-none">
+                        <FormLabel>
+                        Apto vegano
+                        </FormLabel>
+                    </div>
                     <FormMessage />
                     </FormItem>
                 )}
                 />
                 <FormField
                 control={form.control}
-                name="lng"
+                name="esAptoCeliaco"
                 render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Lng</FormLabel>
+                    <FormItem className="flex flex-row items-start space-x-2 space-y-0 ">
                     <FormControl>
-                        <Input required placeholder="" {...field} />
+                        <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        />
                     </FormControl>
+                    <div className="space-y-1 leading-none">
+                        <FormLabel>
+                        Apto celiaco
+                        </FormLabel>
+                    </div>
                     <FormMessage />
                     </FormItem>
                 )}
                 />
+                <FormField
+                control={form.control}
+                name="esAlcoholica"
+                render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-2 space-y-0 ">
+                    <FormControl>
+                        <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                        <FormLabel>
+                        Es alcoholica
+                        </FormLabel>
+                    </div>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="esGaseosa"
+                render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-2 space-y-0 ">
+                    <FormControl>
+                        <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                        <FormLabel>
+                        Es gaseosa
+                        </FormLabel>
+                    </div>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+
                 <Button type="submit" className="float-left w-32">CREAR</Button>
                 <DialogClose asChild className="float-right">
                     <Button type="button" className="w-32">
@@ -194,5 +260,4 @@ function CrearClienteDialog({triggerFetchData}: CrearClienteDialogProps) {
     )
 }
   
-export default CrearClienteDialog
-  
+export default CrearBebidaDialog

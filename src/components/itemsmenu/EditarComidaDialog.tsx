@@ -24,56 +24,49 @@ import {
     DialogTitle,
 } from "../generales/dialog"
 
-import {Cliente} from "./tableClientes"
+import {Comida} from "./tableItemsMenu"
 import { useEffect } from "react"
+import { Checkbox } from "../ui/checkbox"
 
-interface EditarClienteDialogProps {
+interface EditarComidaDialogProps {
     open: boolean,
-    clienteData: Cliente,
+    itemMenuData: Comida,
     closeEditDialog: () => void,
     triggerFetchData: () => void
 }
 
 const formSchema = z.object({
     nombre: z.string(),
-    apellido: z.string(),
-    email: z.string().email(),
-    cuit: z.string().min(5, {
-        message: "CUIT is too short.",
-    }).includes("-", 
-        {message: "Invalid CUIT format."}
-    ),
-    direccion: z.string(),
-    lat: z.coerce.number({
-        invalid_type_error: "Lat must be a number.",
-    }),
-    lng: z.coerce.number({
-        invalid_type_error: "Lng must be a number.",
-    }),
+    descripcion: z.string(),
+    precio: z.coerce.number().positive(),
+    vendedor: z.coerce.number(),
+    esAptoVegano: z.boolean(),
+    esAptoCeliaco: z.boolean(),
+    peso: z.coerce.number().positive(),
 })
 
-function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchData}: EditarClienteDialogProps) {
+function EditarComidaDialog({open, itemMenuData, closeEditDialog, triggerFetchData}: EditarComidaDialogProps) {
 
     // 1. Define your form.
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            id: clienteData.id,
-            nombre: clienteData.nombre,
-            apellido: clienteData.apellido,
-            email: clienteData.email,
-            cuit: clienteData.cuit,
-            direccion: clienteData.direccion,
-            lat: clienteData.lat,
-            lng: clienteData.lng
+            nombre: itemMenuData.nombre,
+            descripcion: itemMenuData.descripcion,
+            precio: itemMenuData.precio,
+            categoria: itemMenuData.categoria,
+            vendedor: itemMenuData.vendedor,
+            esAptoVegano: itemMenuData.esAptoVegano,
+            esAptoCeliaco: itemMenuData.esAptoCeliaco,
+            peso: itemMenuData.peso,
         },
     })
 
     useEffect(() => {
-        form.reset(clienteData)
+        form.reset(itemMenuData)
     }, [open])
     
-    //form.reset(clienteData)
+    //form.reset(itemMenuData)
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
@@ -88,12 +81,11 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
         <Dialog open={open} onOpenChange={open? closeEditDialog : () => {}}>
         <DialogContent className="max-h-screen overflow-y-auto">
             <DialogHeader>
-            <DialogTitle>EDITAR CLIENTE</DialogTitle>
+            <DialogTitle>EDITAR ITEM COMIDA</DialogTitle>
             <DialogDescription>
-            Completa los campos con la información del cliente
+            Completa los campos con la información del item comida
             </DialogDescription>
             </DialogHeader>
-
 
             <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -104,7 +96,7 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
                     <FormItem>
                     <FormLabel>Nombre</FormLabel>
                     <FormControl>
-                        <Input required {...field} />
+                        <Input required placeholder="" {...field} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>
@@ -112,10 +104,23 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
                 />
                 <FormField
                 control={form.control}
-                name="apellido"
+                name="descripcion"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Apellido</FormLabel>
+                    <FormLabel>Descripcion</FormLabel>
+                    <FormControl>
+                        <Input placeholder="" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="precio"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Precio</FormLabel>
                     <FormControl>
                         <Input required placeholder="" {...field} />
                     </FormControl>
@@ -125,10 +130,10 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
                 />
                 <FormField
                 control={form.control}
-                name="email"
+                name="vendedor"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Vendedor</FormLabel>
                     <FormControl>
                         <Input required placeholder="" {...field} />
                     </FormControl>
@@ -138,10 +143,10 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
                 />
                 <FormField
                 control={form.control}
-                name="cuit"
+                name="peso"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>CUIT</FormLabel>
+                    <FormLabel>Peso</FormLabel>
                     <FormControl>
                         <Input required placeholder="" {...field} />
                     </FormControl>
@@ -151,44 +156,47 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
                 />
                 <FormField
                 control={form.control}
-                name="direccion"
+                name="esAptoVegano"
                 render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Direccion</FormLabel>
+                    <FormItem className="flex flex-row items-start space-x-2 space-y-0 ">
                     <FormControl>
-                        <Input required placeholder="" {...field} />
+                        <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        />
                     </FormControl>
+                    <div className="space-y-1 leading-none">
+                        <FormLabel>
+                        Apto vegano
+                        </FormLabel>
+                    </div>
                     <FormMessage />
                     </FormItem>
                 )}
                 />
                 <FormField
                 control={form.control}
-                name="lat"
+                name="esAptoCeliaco"
                 render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Lat</FormLabel>
+                    <FormItem className="flex flex-row items-start space-x-2 space-y-0 ">
                     <FormControl>
-                        <Input required placeholder="" {...field} />
+                        <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        />
                     </FormControl>
+                    <div className="space-y-1 leading-none">
+                        <FormLabel>
+                        Apto celiaco
+                        </FormLabel>
+                    </div>
                     <FormMessage />
                     </FormItem>
                 )}
                 />
-                <FormField
-                control={form.control}
-                name="lng"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Lng</FormLabel>
-                    <FormControl>
-                        <Input required placeholder="" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                <Button type="submit" className="float-left w-32">EDITAR</Button>
+                
+
+                <Button type="submit" className="float-left w-32">CREAR</Button>
                 <DialogClose asChild className="float-right">
                     <Button type="button" className="w-32">
                     CANCELAR
@@ -201,5 +209,5 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
     )
 }
   
-export default EditarClienteDialog
+export default EditarComidaDialog
   
