@@ -30,7 +30,8 @@ import { useEffect } from "react"
 interface EditarClienteDialogProps {
     open: boolean,
     clienteData: Cliente,
-    closeEditDialog: () => void
+    closeEditDialog: () => void,
+    triggerFetchData: () => void
 }
 
 const formSchema = z.object({
@@ -51,7 +52,8 @@ const formSchema = z.object({
     }),
 })
 
-function EditarClienteDialog({open, clienteData, closeEditDialog}: EditarClienteDialogProps) {
+function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchData}: EditarClienteDialogProps) {
+
     // 1. Define your form.
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -76,6 +78,10 @@ function EditarClienteDialog({open, clienteData, closeEditDialog}: EditarCliente
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
+
+        closeEditDialog()
+        //Actualizar los datos de la tabla
+        triggerFetchData()
         console.log(values)
     }
     return (
@@ -182,7 +188,9 @@ function EditarClienteDialog({open, clienteData, closeEditDialog}: EditarCliente
                     </FormItem>
                 )}
                 />
-                <Button type="submit" className="float-left">Crear</Button>
+                <Button type="submit">
+                    Editar
+                </Button>
                 <DialogClose asChild className="float-right">
                     <Button type="button" variant="secondary">
                     Close

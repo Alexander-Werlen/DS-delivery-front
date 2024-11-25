@@ -24,6 +24,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "../generales/dialog"
+import { useState } from "react"
 
 const formSchema = z.object({
     nombre: z.string(),
@@ -43,7 +44,13 @@ const formSchema = z.object({
     }),
 })
 
-function CrearClienteDialog() {
+interface CrearClienteDialogProps {
+    triggerFetchData: () => void
+}
+
+function CrearClienteDialog({triggerFetchData}: CrearClienteDialogProps) {
+    const [open, setOpen] = useState(false)
+
     // 1. Define your form.
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -61,10 +68,14 @@ function CrearClienteDialog() {
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
+
         console.log(values)
+        //actualizar datos de la tabla
+        triggerFetchData()
+        setOpen(false)
     }
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
             <Button className="mr-2 w-40">CREAR CLIENTE</Button>
         </DialogTrigger>

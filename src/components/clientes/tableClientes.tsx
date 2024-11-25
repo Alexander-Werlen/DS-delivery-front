@@ -50,10 +50,11 @@ export type Cliente = {
 }
 
 interface DataTableProps {
-  data: Cliente[]
+  data: Cliente[],
+  triggerFetchData:  () => void
 }
 
-export function DataTable({data}: DataTableProps) {
+export function DataTable({data, triggerFetchData}: DataTableProps) {
   
   const [editClienteDialogData, setEditClienteDialogData] = useState<{open: boolean, cliente: Cliente}>({
     open: false,
@@ -434,8 +435,8 @@ export function DataTable({data}: DataTableProps) {
         </div>
       </div>
     </div>
-    <EditarClienteDialog open={editClienteDialogData.open} clienteData={editClienteDialogData.cliente} closeEditDialog={closeEditDialog}/>
-    <EliminarClienteDialog open={eliminarClienteDialogData.open} clienteData={eliminarClienteDialogData.cliente} closeEliminarDialog={closeEliminarDialog}/>
+    <EditarClienteDialog open={editClienteDialogData.open} clienteData={editClienteDialogData.cliente} closeEditDialog={closeEditDialog} triggerFetchData={triggerFetchData}/>
+    <EliminarClienteDialog open={eliminarClienteDialogData.open} clienteData={eliminarClienteDialogData.cliente} closeEliminarDialog={closeEliminarDialog} triggerFetchData={triggerFetchData}/>
     </>
   )
 }

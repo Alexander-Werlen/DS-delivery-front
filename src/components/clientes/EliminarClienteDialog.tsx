@@ -14,12 +14,17 @@ interface EliminarClienteDialogProps {
     open: boolean,
     clienteData: Cliente,
     closeEliminarDialog: () => void,
+    triggerFetchData: () => void
 }
 
-export default function EliminarClienteDialog({open, clienteData, closeEliminarDialog}: EliminarClienteDialogProps) {
+export default function EliminarClienteDialog({open, clienteData, closeEliminarDialog, triggerFetchData}: EliminarClienteDialogProps) {
     const eliminarCliente = (id: number) => {
         //TODO: Eliminar cliente
+
+        //actualizar datos de la tabla
+        triggerFetchData()
         console.log(id)
+        closeEliminarDialog()
     }
     return (
         <AlertDialog open={open} onOpenChange={open? closeEliminarDialog : () => {}}>
