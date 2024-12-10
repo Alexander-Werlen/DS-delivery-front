@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
+import { useToast } from "@/hooks/use-toast"
+
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -28,6 +30,8 @@ import {Bebida} from "./tableItemsMenu"
 import { useEffect } from "react"
 import { Checkbox } from "../ui/checkbox"
 
+import { editarBebida } from "@/services/itemMenuService"
+
 interface EditarBebidaDialogProps {
     open: boolean,
     itemMenuData: Bebida,
@@ -49,6 +53,7 @@ const formSchema = z.object({
 })
 
 function EditarBebidaDialog({open, itemMenuData, closeEditDialog, triggerFetchData}: EditarBebidaDialogProps) {
+    const { toast } = useToast()
 
     // 1. Define your form.
     const form = useForm({
@@ -75,12 +80,21 @@ function EditarBebidaDialog({open, itemMenuData, closeEditDialog, triggerFetchDa
     //form.reset(itemMenuData)
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-
-        //Actualizar los datos de la tabla
-        triggerFetchData()
-        console.log(values)
+        editarBebida({...values, "id": itemMenuData.id, "categoria": "BEBIDA"}).then(() => {
+            triggerFetchData()
+            toast({
+                variant: "default",
+                title: "Bebida editada",
+                description: "Se pudo editar la bebida correctamente",
+            })
+        }).catch(e => {
+            console.log(e)
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "No se pudo editar la bebida correctamente",
+            })
+        })
         closeEditDialog()
     }
     return (

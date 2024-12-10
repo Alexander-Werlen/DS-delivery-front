@@ -42,7 +42,6 @@ export type Vendedor = {
   id: number,
   nombre: string,
   cuit: string,
-  email: string,
   direccion: string,
   lat: number,
   lng: number
@@ -61,7 +60,6 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
       id: -1,
       nombre: "",
       cuit: "",
-      email: "",
       direccion: "",
       lat: 0,
       lng: 0
@@ -78,7 +76,6 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
       id: -1,
       nombre: "",
       cuit: "",
-      email: "",
       direccion: "",
       lat: 0,
       lng: 0
@@ -128,21 +125,6 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
       cell: ({ row }) => (
         <div className="capitalize">{row.getValue("nombre")}</div>
       ),
-    },
-    {
-      accessorKey: "email",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Email
-            <ArrowUpDown />
-          </Button>
-        )
-      },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
     },
     {
       accessorKey: "cuit",
@@ -298,14 +280,6 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
           value={(table.getColumn("direccion")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("direccion")?.setFilterValue(event.target.value)
-          }
-          className="max-w-40 mr-2"
-          />
-        <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
           }
           className="max-w-40 mr-2"
           />

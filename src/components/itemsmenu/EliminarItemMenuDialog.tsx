@@ -10,6 +10,10 @@ import {
   } from "@/components/ui/alert-dialog"
 import { ItemMenu } from "./tableItemsMenu"
 
+import { useToast } from "@/hooks/use-toast"
+
+import { deleteItemMenu } from "@/services/itemMenuService"
+
 interface EliminarItemMenuDialogProps {
     open: boolean,
     itemMenuData: ItemMenu,
@@ -18,12 +22,23 @@ interface EliminarItemMenuDialogProps {
 }
 
 export default function EliminarItemMenuDialog({open, itemMenuData, closeEliminarDialog, triggerFetchData}: EliminarItemMenuDialogProps) {
+    const { toast } = useToast()
     const eliminarItemMenu = (id: number) => {
-        //TODO: Eliminar ItemMenu
-
-        //actualizar datos de la tabla
-        triggerFetchData()
-        console.log(id)
+        deleteItemMenu(id).then(() => {
+            toast({
+                variant: "default",
+                title: "Item menu eliminado",
+                description: "Se eliminó al item menu correctamente",
+            })
+            triggerFetchData()
+        }).catch(e => {
+            console.log(e)
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "No se pudo eliminar al item menu correctamente",
+            })
+        })
         closeEliminarDialog()
     }
     return (

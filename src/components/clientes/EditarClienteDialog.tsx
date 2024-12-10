@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
+import { useToast } from "@/hooks/use-toast"
+
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -26,6 +28,9 @@ import {
 
 import {Cliente} from "./tableClientes"
 import { useEffect } from "react"
+
+import { editarCliente } from "@/services/clienteService"
+
 
 interface EditarClienteDialogProps {
     open: boolean,
@@ -53,6 +58,7 @@ const formSchema = z.object({
 })
 
 function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchData}: EditarClienteDialogProps) {
+    const { toast } = useToast()
 
     // 1. Define your form.
     const form = useForm({
@@ -80,8 +86,21 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
         // ✅ This will be type-safe and validated.
 
         //Actualizar los datos de la tabla
-        triggerFetchData()
-        console.log(values)
+        editarCliente({...values, "id": clienteData.id}).then(() => {
+            triggerFetchData()
+            toast({
+                variant: "default",
+                title: "Cliente editado",
+                description: "Se pudo editar al cliente correctamente",
+            })
+        }).catch(e => {
+            console.log(e)
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "No se pudo editar al cliente correctamente",
+            })
+        })
         closeEditDialog()
     }
     return (

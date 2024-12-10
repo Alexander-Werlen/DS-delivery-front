@@ -5,324 +5,37 @@ import { useToast } from "@/hooks/use-toast"
 import CrearClienteDialog from "./CrearClienteDialog"
 import { DataTable, Cliente } from "./tableClientes"
 
+import { getAllClientes } from "@/services/clienteService"
+
 function ClientesSection() {
     const { toast } = useToast()
 
     const [listaClientes, setListaClientes] = useState<Cliente[]>([])
 
     const triggerFetchClientes = async () => {
-        try{
-            //simula GET todos los clientes del back
-            const clientesResponse: Cliente[] = [
-                {
-                  id: 5,
-                  nombre: 'Pedro',
-                  apellido: 'Perez',
-                  cuit: '30-12345678-9',
-                  email: 'fH7nG@example.com',
-                  direccion: 'Calle 123',
-                  lat: -94.2321,
-                  lng: 28.085685
-                },
-                {
-                    id: 2,
-                    nombre: 'Juan',
-                    apellido: 'Perez',
-                    cuit: '10-12343678-9',
-                    email: 'f123dfsnG@example.com',
-                    direccion: 'Calle 49801',
-                    lat: -194.2321,
-                    lng: 228.085685
-                },
-                {
-                    id: 3,
-                    nombre: 'Ale',
-                    apellido: 'Eerez',
-                    cuit: '20-12345678-9',
-                    email: 'fH7nG@example.com',
-                    direccion: 'Calle 123',
-                    lat: -54.2321,
-                    lng: 428.085685
-                },
-                {
-                  id: 1,
-                  nombre: 'Pedro',
-                  apellido: 'Perez',
-                  cuit: '30-12345678-9',
-                  email: 'fH7nG@example.com',
-                  direccion: 'Calle 123',
-                  lat: -94.2321,
-                  lng: 28.085685
-                },
-                {
-                  id: 2,
-                  nombre: 'Juan',
-                  apellido: 'Perez',
-                  cuit: '10-12343678-9',
-                  email: 'f123dfsnG@example.com',
-                  direccion: 'Calle 49801',
-                  lat: -194.2321,
-                  lng: 228.085685
-                },
-                {
-                  id: 3,
-                  nombre: 'Ale',
-                  apellido: 'Eerez',
-                  cuit: '20-12345678-9',
-                  email: 'fH7nG@example.com',
-                  direccion: 'Calle 123',
-                  lat: -54.2321,
-                  lng: 428.085685
-                },{
-                    id: 5,
-                    nombre: 'Pedro',
-                    apellido: 'Perez',
-                    cuit: '30-12345678-9',
-                    email: 'fH7nG@example.com',
-                    direccion: 'Calle 123',
-                    lat: -94.2321,
-                    lng: 28.085685
-                  },
-                  {
-                      id: 2,
-                      nombre: 'Juan',
-                      apellido: 'Perez',
-                      cuit: '10-12343678-9',
-                      email: 'f123dfsnG@example.com',
-                      direccion: 'Calle 49801',
-                      lat: -194.2321,
-                      lng: 228.085685
-                  },
-                  {
-                      id: 3,
-                      nombre: 'Ale',
-                      apellido: 'Eerez',
-                      cuit: '20-12345678-9',
-                      email: 'fH7nG@example.com',
-                      direccion: 'Calle 123',
-                      lat: -54.2321,
-                      lng: 428.085685
-                  },
-                  {
-                    id: 1,
-                    nombre: 'Pedro',
-                    apellido: 'Perez',
-                    cuit: '30-12345678-9',
-                    email: 'fH7nG@example.com',
-                    direccion: 'Calle 123',
-                    lat: -94.2321,
-                    lng: 28.085685
-                  },
-                  {
-                    id: 2,
-                    nombre: 'Juan',
-                    apellido: 'Perez',
-                    cuit: '10-12343678-9',
-                    email: 'f123dfsnG@example.com',
-                    direccion: 'Calle 49801',
-                    lat: -194.2321,
-                    lng: 228.085685
-                  },
-                  {
-                    id: 3,
-                    nombre: 'Ale',
-                    apellido: 'Eerez',
-                    cuit: '20-12345678-9',
-                    email: 'fH7nG@example.com',
-                    direccion: 'Calle 123',
-                    lat: -54.2321,
-                    lng: 428.085685
-                  },{
-                    id: 5,
-                    nombre: 'Pedro',
-                    apellido: 'Perez',
-                    cuit: '30-12345678-9',
-                    email: 'fH7nG@example.com',
-                    direccion: 'Calle 123',
-                    lat: -94.2321,
-                    lng: 28.085685
-                  },
-                  {
-                      id: 2,
-                      nombre: 'Juan',
-                      apellido: 'Perez',
-                      cuit: '10-12343678-9',
-                      email: 'f123dfsnG@example.com',
-                      direccion: 'Calle 49801',
-                      lat: -194.2321,
-                      lng: 228.085685
-                  },
-                  {
-                      id: 3,
-                      nombre: 'Ale',
-                      apellido: 'Eerez',
-                      cuit: '20-12345678-9',
-                      email: 'fH7nG@example.com',
-                      direccion: 'Calle 123',
-                      lat: -54.2321,
-                      lng: 428.085685
-                  },
-                  {
-                    id: 1,
-                    nombre: 'Pedro',
-                    apellido: 'Perez',
-                    cuit: '30-12345678-9',
-                    email: 'fH7nG@example.com',
-                    direccion: 'Calle 123',
-                    lat: -94.2321,
-                    lng: 28.085685
-                  },
-                  {
-                    id: 2,
-                    nombre: 'Juan',
-                    apellido: 'Perez',
-                    cuit: '10-12343678-9',
-                    email: 'f123dfsnG@example.com',
-                    direccion: 'Calle 49801',
-                    lat: -194.2321,
-                    lng: 228.085685
-                  },
-                  {
-                    id: 3,
-                    nombre: 'Ale',
-                    apellido: 'Eerez',
-                    cuit: '20-12345678-9',
-                    email: 'fH7nG@example.com',
-                    direccion: 'Calle 123',
-                    lat: -54.2321,
-                    lng: 428.085685
-                  },
-                  {
-                    id: 5,
-                    nombre: 'Pedro',
-                    apellido: 'Perez',
-                    cuit: '30-12345678-9',
-                    email: 'fH7nG@example.com',
-                    direccion: 'Calle 123',
-                    lat: -94.2321,
-                    lng: 28.085685
-                  },
-                  {
-                      id: 2,
-                      nombre: 'Juan',
-                      apellido: 'Perez',
-                      cuit: '10-12343678-9',
-                      email: 'f123dfsnG@example.com',
-                      direccion: 'Calle 49801',
-                      lat: -194.2321,
-                      lng: 228.085685
-                  },
-                  {
-                      id: 3,
-                      nombre: 'Ale',
-                      apellido: 'Eerez',
-                      cuit: '20-12345678-9',
-                      email: 'fH7nG@example.com',
-                      direccion: 'Calle 123',
-                      lat: -54.2321,
-                      lng: 428.085685
-                  },
-                  {
-                    id: 1,
-                    nombre: 'Pedro',
-                    apellido: 'Perez',
-                    cuit: '30-12345678-9',
-                    email: 'fH7nG@example.com',
-                    direccion: 'Calle 123',
-                    lat: -94.2321,
-                    lng: 28.085685
-                  },
-                  {
-                    id: 2,
-                    nombre: 'Juan',
-                    apellido: 'Perez',
-                    cuit: '10-12343678-9',
-                    email: 'f123dfsnG@example.com',
-                    direccion: 'Calle 49801',
-                    lat: -194.2321,
-                    lng: 228.085685
-                  },
-                  {
-                    id: 3,
-                    nombre: 'Ale',
-                    apellido: 'Eerez',
-                    cuit: '20-12345678-9',
-                    email: 'fH7nG@example.com',
-                    direccion: 'Calle 123',
-                    lat: -54.2321,
-                    lng: 428.085685
-                  },
-                  {
-                    id: 5,
-                    nombre: 'Pedro',
-                    apellido: 'Perez',
-                    cuit: '30-12345678-9',
-                    email: 'fH7nG@example.com',
-                    direccion: 'Calle 123',
-                    lat: -94.2321,
-                    lng: 28.085685
-                  },
-                  {
-                      id: 2,
-                      nombre: 'Juan',
-                      apellido: 'Perez',
-                      cuit: '10-12343678-9',
-                      email: 'f123dfsnG@example.com',
-                      direccion: 'Calle 49801',
-                      lat: -194.2321,
-                      lng: 228.085685
-                  },
-                  {
-                      id: 3,
-                      nombre: 'Ale',
-                      apellido: 'Eerez',
-                      cuit: '20-12345678-9',
-                      email: 'fH7nG@example.com',
-                      direccion: 'Calle 123',
-                      lat: -54.2321,
-                      lng: 428.085685
-                  },
-                  {
-                    id: 1,
-                    nombre: 'Pedro',
-                    apellido: 'Perez',
-                    cuit: '30-12345678-9',
-                    email: 'fH7nG@example.com',
-                    direccion: 'Calle 123',
-                    lat: -94.2321,
-                    lng: 28.085685
-                  },
-                  {
-                    id: 2,
-                    nombre: 'Juan',
-                    apellido: 'Perez',
-                    cuit: '10-12343678-9',
-                    email: 'f123dfsnG@example.com',
-                    direccion: 'Calle 49801',
-                    lat: -194.2321,
-                    lng: 228.085685
-                  },
-                  {
-                    id: 3,
-                    nombre: 'Ale',
-                    apellido: 'Eerez',
-                    cuit: '20-12345678-9',
-                    email: 'fH7nG@example.com',
-                    direccion: 'Calle 123',
-                    lat: -54.2321,
-                    lng: 428.085685
-                  }
-            ]
-            
-            setListaClientes(clientesResponse)
-        } catch (err) {
-            console.log(err)
-            toast({
-                variant: "destructive",
-                title: "Error cargando clientes",
-                description: "No se pudieron cargar los clientes del sistema",
-            })
-        }
+        
+      getAllClientes().then((response) => {
+        const clientesResponse: Cliente[] = response.data.map((c) => {
+          return {
+            "id": c.id,
+            "nombre": c.nombre,
+            "apellido": c.apellido,
+            "cuit": c.cuit,
+            "email": c.email,
+            "direccion": c.direccion,
+            "lat": c.coordenada.latitud,
+            "lng": c.coordenada.longitud,
+          }
+        })
+        setListaClientes(clientesResponse)
+      }).catch(e => {
+        console.log(e)
+        toast({
+            variant: "destructive",
+            title: "Error cargando clientes",
+            description: "No se pudieron cargar los clientes del sistema",
+        })
+      })
     }
 
     useEffect(() => {

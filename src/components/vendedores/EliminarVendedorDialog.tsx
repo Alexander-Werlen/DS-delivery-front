@@ -10,6 +10,10 @@ import {
   } from "@/components/ui/alert-dialog"
 import { Vendedor } from "./tableVendedores"
 
+import { useToast } from "@/hooks/use-toast"
+
+import { deleteVendedor } from "@/services/vendedorService"
+
 interface EliminarVendedorDialogProps {
     open: boolean,
     vendedorData: Vendedor,
@@ -18,12 +22,24 @@ interface EliminarVendedorDialogProps {
 }
 
 export default function EliminarVendedorDialog({open, vendedorData, closeEliminarDialog, triggerFetchData}: EliminarVendedorDialogProps) {
+    const { toast } = useToast()
+    
     const eliminarVendedor = (id: number) => {
-        //TODO: Eliminar vendedor
-
-        //actualizar datos de la tabla
-        triggerFetchData()
-        console.log(id)
+        deleteVendedor(id).then(() => {
+            toast({
+                variant: "default",
+                title: "Vendedor eliminado",
+                description: "Se eliminó al vendedor correctamente",
+            })
+            triggerFetchData()
+        }).catch(e => {
+            console.log(e)
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "No se pudo eliminar al vendedor correctamente",
+            })
+        })
         closeEliminarDialog()
     }
     return (

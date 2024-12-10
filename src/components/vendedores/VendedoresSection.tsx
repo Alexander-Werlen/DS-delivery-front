@@ -5,63 +5,35 @@ import { useToast } from "@/hooks/use-toast"
 import CrearVendedorDialog from "./CrearVendedorDialog"
 import { DataTable, Vendedor } from "./tableVendedores"
 
+import { getAllVendedores } from "@/services/vendedorService"
+
+
 function VendedoresSection() {
     const { toast } = useToast()
 
     const [listaVendedores, setListaVendedores] = useState<Vendedor[]>([])
 
     const triggerFetchVendedores = async () => {
-        try{
-            //simula GET todos los vendedors del back
-            const vendedorsResponse: Vendedor[] = [
-                {
-                  id: 5,
-                  nombre: 'Pedro',
-                  cuit: '30-12345678-9',
-                  email: 'fH7nG@example.com',
-                  direccion: 'Calle 123',
-                  lat: -94.2321,
-                  lng: 28.085685
-                },
-                {
-                    id: 2,
-                    nombre: 'Juan',
-                    cuit: '10-12343678-9',
-                    email: 'f123dfsnG@example.com',
-                    direccion: 'Calle 49801',
-                    lat: -194.2321,
-                    lng: 228.085685
-                },
-                {
-                    id: 3,
-                    nombre: 'Ale',
-                    cuit: '20-12345678-9',
-                    email: 'fH7nG@example.com',
-                    direccion: 'Calle 123',
-                    lat: -54.2321,
-                    lng: 428.085685
-                },
-                {
-                  id: 1,
-                  nombre: 'Pedro',
-                  cuit: '30-12345678-9',
-                  email: 'fH7nG@example.com',
-                  direccion: 'Calle 123',
-                  lat: -94.2321,
-                  lng: 28.085685
-                },
-                
-            ]
-            
+        getAllVendedores().then((response) => {
+            const vendedorsResponse: Vendedor[] = response.data.map((v) => {
+                return {
+                    "id": v.id,
+                    "nombre": v.nombre,
+                    "cuit": v.cuit,
+                    "direccion": v.direccion,
+                    "lat": v.coordenada.latitud,
+                    "lng": v.coordenada.longitud,
+                }
+            })
             setListaVendedores(vendedorsResponse)
-        } catch (err) {
-            console.log(err)
+        }).catch (e => {
+            console.log(e)
             toast({
                 variant: "destructive",
-                title: "Error cargando vendedors",
-                description: "No se pudieron cargar los vendedors del sistema",
+                title: "Error cargando vendedores",
+                description: "No se pudieron cargar los vendedores del sistema",
             })
-        }
+        })
     }
 
     useEffect(() => {

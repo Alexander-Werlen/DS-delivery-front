@@ -384,7 +384,7 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
-                  setEliminarItemMenuDialogData(self => {return {open: true, itemMenu: self.itemMenu}})
+                  setEliminarItemMenuDialogData(() => {return {open: true, itemMenu: itemMenu}})
                 }}
               >
                 Eliminar

@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
+import { useToast } from "@/hooks/use-toast"
+
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -27,6 +29,9 @@ import {
 import {Vendedor} from "./tableVendedores"
 import { useEffect } from "react"
 
+import { editarVendedor } from "@/services/vendedorService"
+
+
 interface EditarVendedorDialogProps {
     open: boolean,
     vendedorData: Vendedor,
@@ -36,7 +41,6 @@ interface EditarVendedorDialogProps {
 
 const formSchema = z.object({
     nombre: z.string(),
-    email: z.string().email(),
     cuit: z.string().min(5, {
         message: "CUIT is too short.",
     }).includes("-", 
@@ -52,6 +56,7 @@ const formSchema = z.object({
 })
 
 function EditarVendedorDialog({open, vendedorData, closeEditDialog, triggerFetchData}: EditarVendedorDialogProps) {
+    const { toast } = useToast()
 
     // 1. Define your form.
     const form = useForm({
@@ -59,7 +64,6 @@ function EditarVendedorDialog({open, vendedorData, closeEditDialog, triggerFetch
         defaultValues: {
             id: vendedorData.id,
             nombre: vendedorData.nombre,
-            email: vendedorData.email,
             cuit: vendedorData.cuit,
             direccion: vendedorData.direccion,
             lat: vendedorData.lat,
@@ -74,12 +78,21 @@ function EditarVendedorDialog({open, vendedorData, closeEditDialog, triggerFetch
     //form.reset(vendedorData)
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-
-        //Actualizar los datos de la tabla
-        triggerFetchData()
-        console.log(values)
+        editarVendedor({...values, "id": vendedorData.id}).then(() => {
+            triggerFetchData()
+            toast({
+                variant: "default",
+                title: "Vendedor editado",
+                description: "Se pudo editar al vendedor correctamente",
+            })
+        }).catch(e => {
+            console.log(e)
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "No se pudo editar al vendedor correctamente",
+            })
+        })
         closeEditDialog()
     }
     return (
@@ -103,19 +116,6 @@ function EditarVendedorDialog({open, vendedorData, closeEditDialog, triggerFetch
                     <FormLabel>Nombre</FormLabel>
                     <FormControl>
                         <Input required {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                        <Input required placeholder="" {...field} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>

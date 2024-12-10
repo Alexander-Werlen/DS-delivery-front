@@ -6,101 +6,59 @@ import CrearComidaDialog from "./CrearComidaDialog"
 import { DataTable, ItemMenu } from "./tableItemsMenu"
 import CrearBebidaDialog from "./CrearBebidaDialog"
 
+import { getAllItemsMenu } from "@/services/itemMenuService.ts"
+
 function ItemsMenuSection() {
     const { toast } = useToast()
 
     const [listaItemsMenu, setListaItemsMenu] = useState<ItemMenu[]>([])
 
     const triggerFetchItemsMenu = async () => {
-        try{
-            //simula GET todos los ItemMenus del back
-            const itemsMenuResponse: ItemMenu[] = [
-                {
-                    id: 1,
-                    nombre: "Hamburguesa",
-                    descripcion: "",
-                    precio: 12003,
-                    categoria: "COMIDA",
-                    vendedor: 3,
-                    esAptoVegano: false,
-                    esAptoCeliaco: false,
-                    peso: 32,
-                    volumen: null,
-                    graduacionAlcoholica: null,
-                    esAlcoholica: null,
-                    esGaseosa: null
-                },
-                {
-                    id: 2,
-                    nombre: "Coca",
-                    descripcion: "cocaaaa",
-                    precio: 1000,
-                    categoria: "BEBIDA",
-                    vendedor: 3,
-                    esAptoVegano: true,
-                    esAptoCeliaco: true,
-                    peso: null,
-                    volumen: 1000,
-                    graduacionAlcoholica: 0,
-                    esAlcoholica: false,
-                    esGaseosa: true
-                },
-                {
-                    id: 3,
-                    nombre: "Agua",
-                    descripcion: "",
-                    precio: 1200,
-                    categoria: "BEBIDA",
-                    vendedor: 4,
-                    esAptoVegano: true,
-                    esAptoCeliaco: true,
-                    peso: null,
-                    volumen: 1000,
-                    graduacionAlcoholica: 0,
-                    esAlcoholica: false,
-                    esGaseosa: false
-                },
-                {
-                    id: 4,
-                    nombre: "Agua",
-                    descripcion: "",
-                    precio: 1200,
-                    categoria: "BEBIDA",
-                    vendedor: 5,
-                    esAptoVegano: true,
-                    esAptoCeliaco: true,
-                    peso: null,
-                    volumen: 1000,
-                    graduacionAlcoholica: 0,
-                    esAlcoholica: false,
-                    esGaseosa: false
-                },
-                {
-                    id: 5,
-                    nombre: "Empanada",
-                    descripcion: "",
-                    precio: 1200,
-                    categoria: "COMIDA",
-                    vendedor: 5,
-                    esAptoVegano: false,
-                    esAptoCeliaco: false,
-                    peso: 320,
-                    volumen: null,
-                    graduacionAlcoholica: null,
-                    esAlcoholica: null,
-                    esGaseosa: null
-                },
-            ]
-            
-            setListaItemsMenu(itemsMenuResponse)
-        } catch (err) {
-            console.log(err)
+        getAllItemsMenu().then((response) => {
+            const itemsResponse: ItemMenu[] = []
+            response.data.bebidas.forEach((data) => {
+                itemsResponse.push({
+                "id": data.id,
+                "nombre": data.nombre,
+                "descripcion": data.descripcion,
+                "precio": data.precio,
+                "categoria": "BEBIDA",
+                "vendedor": data.vendedor?.id,
+                "esAptoCeliaco": data.esAptoCeliaco,
+                "esAptoVegano": data.esAptoVegano,
+                "peso": data.peso,
+                "volumen": data.volumen,
+                "graduacionAlcoholica": data.graduacionAlcoholica,
+                "esAlcoholica": data.esAlcoholica,
+                "esGaseosa": data.esGaseosa
+                })
+            })
+            response.data.comidas.forEach((data) => {
+                itemsResponse.push({
+                "id": data.id,
+                "nombre": data.nombre,
+                "descripcion": data.descripcion,
+                "precio": data.precio,
+                "categoria": "COMIDA",
+                "vendedor": data.vendedor?.id,
+                "esAptoCeliaco": data.esAptoCeliaco,
+                "esAptoVegano": data.esAptoVegano,
+                "peso": data.peso,
+                "volumen": null,
+                "graduacionAlcoholica": null,
+                "esAlcoholica": null,
+                "esGaseosa": null
+                })
+            })
+            setListaItemsMenu(itemsResponse)
+          }).catch(e => {
+            console.log(e)
             toast({
                 variant: "destructive",
                 title: "Error cargando items menu",
                 description: "No se pudieron cargar los items menu del sistema",
             })
-        }
+          })
     }
 
     useEffect(() => {

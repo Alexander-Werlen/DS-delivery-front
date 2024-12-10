@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
+import { useToast } from "@/hooks/use-toast"
+
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -27,6 +29,8 @@ import {
 import { useState } from "react"
 import { Checkbox } from "../ui/checkbox"
 
+import { crearBebida } from "@/services/itemMenuService"
+
 const formSchema = z.object({
     nombre: z.string(),
     descripcion: z.string(),
@@ -45,6 +49,8 @@ interface CrearBebidaDialogProps {
 }
 
 function CrearBebidaDialog({triggerFetchData}: CrearBebidaDialogProps) {
+    const { toast } = useToast()
+
     const [open, setOpen] = useState(false)
 
     // 1. Define your form.
@@ -65,12 +71,21 @@ function CrearBebidaDialog({triggerFetchData}: CrearBebidaDialogProps) {
     })
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-
-        console.log(values)
-        //actualizar datos de la tabla
-        triggerFetchData()
+        crearBebida({...values, "id": 0, "categoria": "BEBIDA"}).then(() => {
+            toast({
+                variant: "default",
+                title: "Bebida creada",
+                description: "Se creó la bebida exitosamente",
+            })
+            triggerFetchData()
+        }).catch(e => {
+            console.log(e)
+            toast({
+                variant: "destructive",
+                title: "Error creando la bebida",
+                description: "No se pudo crear la bebida",
+            })
+        })
         setOpen(false)
     }
     return (

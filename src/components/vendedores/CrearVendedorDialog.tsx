@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
+import { useToast } from "@/hooks/use-toast"
+
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -26,9 +28,11 @@ import {
 } from "../generales/dialog"
 import { useState } from "react"
 
+import { crearVendedor } from "@/services/vendedorService"
+
+
 const formSchema = z.object({
     nombre: z.string(),
-    email: z.string().email(),
     cuit: z.string().min(5, {
         message: "CUIT is too short.",
     }).includes("-", 
@@ -48,6 +52,8 @@ interface CrearVendedorDialogProps {
 }
 
 function CrearVendedorDialog({triggerFetchData}: CrearVendedorDialogProps) {
+    const { toast } = useToast()
+
     const [open, setOpen] = useState(false)
 
     // 1. Define your form.
@@ -55,7 +61,6 @@ function CrearVendedorDialog({triggerFetchData}: CrearVendedorDialogProps) {
         resolver: zodResolver(formSchema),
         defaultValues: {
             nombre: "",
-            email: "",
             cuit: "",
             direccion: "",
             lat: 0,
@@ -66,10 +71,22 @@ function CrearVendedorDialog({triggerFetchData}: CrearVendedorDialogProps) {
     function onSubmit(values: z.infer<typeof formSchema>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-
         console.log(values)
-        //actualizar datos de la tabla
-        triggerFetchData()
+        crearVendedor({...values, "id": 0}).then(() => {
+            toast({
+                variant: "default",
+                title: "Vendedor creado",
+                description: "Se creó el vendedor exitosamente",
+            })
+            triggerFetchData()
+        }).catch(e => {
+            console.log(e)
+            toast({
+                variant: "destructive",
+                title: "Error creando al vendedor",
+                description: "No se pudo crear el vendedor",
+            })
+        })
         setOpen(false)
     }
     return (
@@ -94,19 +111,6 @@ function CrearVendedorDialog({triggerFetchData}: CrearVendedorDialogProps) {
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>Nombre</FormLabel>
-                    <FormControl>
-                        <Input required placeholder="" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
-                <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Email</FormLabel>
                     <FormControl>
                         <Input required placeholder="" {...field} />
                     </FormControl>

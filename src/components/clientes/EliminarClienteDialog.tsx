@@ -10,6 +10,11 @@ import {
   } from "@/components/ui/alert-dialog"
 import { Cliente } from "./tableClientes"
 
+import { useToast } from "@/hooks/use-toast"
+
+import { deleteCliente } from "@/services/clienteService"
+
+
 interface EliminarClienteDialogProps {
     open: boolean,
     clienteData: Cliente,
@@ -18,12 +23,24 @@ interface EliminarClienteDialogProps {
 }
 
 export default function EliminarClienteDialog({open, clienteData, closeEliminarDialog, triggerFetchData}: EliminarClienteDialogProps) {
+    const { toast } = useToast()
+    
     const eliminarCliente = (id: number) => {
-        //TODO: Eliminar cliente
-
-        //actualizar datos de la tabla
-        triggerFetchData()
-        console.log(id)
+        deleteCliente(id).then(() => {
+            toast({
+                variant: "default",
+                title: "Cliente eliminado",
+                description: "Se eliminó al cliente correctamente",
+            })
+            triggerFetchData()
+        }).catch(e => {
+            console.log(e)
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "No se pudo eliminar al cliente correctamente",
+            })
+        })
         closeEliminarDialog()
     }
     return (

@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
+import { useToast } from "@/hooks/use-toast"
+
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -25,6 +27,8 @@ import {
     DialogTrigger,
 } from "../generales/dialog"
 import { useState } from "react"
+
+import { crearCliente } from "@/services/clienteService"
 
 const formSchema = z.object({
     nombre: z.string(),
@@ -49,6 +53,8 @@ interface CrearClienteDialogProps {
 }
 
 function CrearClienteDialog({triggerFetchData}: CrearClienteDialogProps) {
+    const { toast } = useToast()
+
     const [open, setOpen] = useState(false)
 
     // 1. Define your form.
@@ -66,12 +72,22 @@ function CrearClienteDialog({triggerFetchData}: CrearClienteDialogProps) {
     })
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
+        crearCliente({...values, "id": 0}).then(() => {
+            toast({
+                variant: "default",
+                title: "Cliente creado",
+                description: "Se creó el cliente exitosamente",
+            })
+            triggerFetchData()
+        }).catch(e => {
+            console.log(e)
+            toast({
+                variant: "destructive",
+                title: "Error creando al cliente",
+                description: "No se pudo crear el cliente",
+            })
+        })
 
-        console.log(values)
-        //actualizar datos de la tabla
-        triggerFetchData()
         setOpen(false)
     }
     return (

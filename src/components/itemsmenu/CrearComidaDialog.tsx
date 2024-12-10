@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
+import { useToast } from "@/hooks/use-toast"
+
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -27,6 +29,8 @@ import {
 import { useState } from "react"
 import { Checkbox } from "../ui/checkbox"
 
+import { crearComida } from "@/services/itemMenuService"
+
 const formSchema = z.object({
     nombre: z.string(),
     descripcion: z.string(),
@@ -42,6 +46,8 @@ interface CrearComidaDialogProps {
 }
 
 function CrearComidaDialog({triggerFetchData}: CrearComidaDialogProps) {
+    const { toast } = useToast()
+
     const [open, setOpen] = useState(false)
 
     // 1. Define your form.
@@ -59,12 +65,21 @@ function CrearComidaDialog({triggerFetchData}: CrearComidaDialogProps) {
     })
     // 2. Define a submit handler.
     function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-
-        console.log(values)
-        //actualizar datos de la tabla
-        triggerFetchData()
+        crearComida({...values, "id": 0, "categoria": "COMIDA"}).then(() => {
+            toast({
+                variant: "default",
+                title: "Comida creada",
+                description: "Se creó la comida exitosamente",
+            })
+            triggerFetchData()
+        }).catch(e => {
+            console.log(e)
+            toast({
+                variant: "destructive",
+                title: "Error creando la comida",
+                description: "No se pudo crear la comida",
+            })
+        })
         setOpen(false)
     }
     return (
