@@ -9,6 +9,7 @@ import NavBar from './components/NavBar'
 import ClientesSection from './components/clientes/ClientesSection'
 import VendedoresSection from './components/vendedores/VendedoresSection'
 import ItemsMenuSection from './components/itemsmenu/ItemsMenuSection'
+import PedidosSection from './components/pedidos/PedidosSection'
 
 function App() {
   return (
@@ -20,8 +21,7 @@ function App() {
           <Route path="/clientes" element={<ClientesSection />} />
           <Route path="/vendedores" element={<VendedoresSection />} />
           <Route path="/itemmenus" element={<ItemsMenuSection />} />
-          <Route path="/pedidos" element={<>pedidos</>} />
-          
+          <Route path="/pedidos" element={<PedidosSection />} />
         </Routes>
       </div>
     </Router>
