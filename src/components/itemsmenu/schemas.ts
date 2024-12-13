@@ -9,7 +9,9 @@ export const BebidaFormSchema = z
     esAptoVegano: z.boolean(),
     esAptoCeliaco: z.boolean(),
     volumen: z.coerce.number().positive({ message: "Volumen debe ser un número positivo." }),
-    graduacionAlcoholica: z.coerce.number().nonnegative({ message: "Graduación alcohólica debe ser un número positivo." }),
+    graduacionAlcoholica: z.coerce
+      .number()
+      .nonnegative({ message: "Graduación alcohólica debe ser un número positivo." }),
     esAlcoholica: z.boolean(),
     esGaseosa: z.boolean(),
   })
@@ -38,3 +40,4 @@ export const ComidaFormSchema = z.object({
   peso: z.coerce.number().positive({ message: "Peso debe ser un número positivo." }),
 });
 export type ComidaForm = z.infer<typeof ComidaFormSchema>;
+

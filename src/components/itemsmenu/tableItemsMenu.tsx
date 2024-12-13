@@ -39,15 +39,31 @@ import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select.tsx"
 import EditarBebidaDialog from "./EditarBebidaDialog.tsx"
 import EditarComidaDialog from "./EditarComidaDialog.tsx"
-import { ItemMenu, Comida, Bebida } from "@/shared.types.ts"
-
-
+import { ItemMenu, Comida, Bebida, ItemMenuAdvancedFilters } from "@/shared.types.ts"
+import FiltrosAvanzadosDialog from "./FiltrosAvanzadosItemMenuDialog.tsx"
+import { useEffect } from "react"
 interface DataTableProps {
   data: ItemMenu[],
-  triggerFetchData: () => void
+  triggerFetchData: (filter?: ItemMenuAdvancedFilters) => void
 }
 
 export function DataTable({ data, triggerFetchData }: DataTableProps) {
+  const [showFiltersDialog, setShowFiltersDialog] = useState(false)
+  const [advancedFilters, setAdvancedFilters] = useState<ItemMenuAdvancedFilters>({})
+
+  // Add handler for applying filters
+  const handleApplyFilters = (filters: ItemMenuAdvancedFilters) => {
+    //Remove properties with false
+    for (const key in filters) {
+      if (filters[key as keyof ItemMenuAdvancedFilters] === false) {
+        delete filters[key as keyof ItemMenuAdvancedFilters]
+      }
+    }
+    setAdvancedFilters(filters)
+  }
+  useEffect(() => {
+    triggerFetchData(advancedFilters)
+  }, [advancedFilters])
 
   const [editItemMenuDialogData, setEditItemMenuDialogData] = useState<{ openComida: boolean, openBebida: boolean, itemComida: Comida, itemBebida: Bebida }>({
     openComida: false,
@@ -419,7 +435,19 @@ export function DataTable({ data, triggerFetchData }: DataTableProps) {
               <SelectItem value="BEBIDA">BEBIDA</SelectItem>
             </SelectContent>
           </Select>
+          <Button
+            variant="outline"
+            className="ml-2"
+            onClick={() => setShowFiltersDialog(true)}
+          >
+            Filtros Avanzados
+          </Button>
 
+          <FiltrosAvanzadosDialog
+            open={showFiltersDialog}
+            closeDialog={() => setShowFiltersDialog(false)}
+            applyFilters={handleApplyFilters}
+          />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

@@ -127,9 +127,9 @@ type PedidoState = "RECIBIDO" | "ENVIADO" | "PREPARADO" | "ACEPTADO";
 export type Pedido = {
   id: number;
   pago: string | null;
-  vendedor: string,
+  vendedor: string;
   vendedor_id: number;
-  cliente: string,
+  cliente: string;
   cliente_id: number;
   precio_total: number;
   estado: PedidoState;
@@ -146,9 +146,9 @@ export type ItemPedidoResponse = {
   id: {
     itemMenu: BaseItemMenuResponse;
     pedido: number;
-  }
-  cantidad: number,
-  precio_total: number
+  };
+  cantidad: number;
+  precio_total: number;
 };
 export type PedidoResponse = {
   id: number;
@@ -159,3 +159,19 @@ export type PedidoResponse = {
   estado: PedidoState;
   items: ItemPedidoResponse[];
 };
+export interface ItemMenuAdvancedFilters {
+  esAptoVegano?: boolean;
+  esAptoCeliaco?: boolean;
+  esAlcoholica?: boolean;
+  esGaseosa?: boolean;
+  soloComidas?: boolean;
+  soloBebidas?: boolean;
+  precioMin?: number;
+  precioMax?: number;
+  pesoMin?: number;
+  pesoMax?: number;
+  volumenMin?: number;
+  volumenMax?: number;
+  graduacionAlcoholicaMin?: number;
+  graduacionAlcoholicaMax?: number;
+}
