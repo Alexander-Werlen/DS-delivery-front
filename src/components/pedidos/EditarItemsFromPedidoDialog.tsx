@@ -113,7 +113,6 @@ export default function EditarItemsOfPedidoDialog({open, pedidoData, closeEditar
                         Completa los campos con la información de los items del pedido
                     </DialogDescription>
                 </DialogHeader>
-                <hr/>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         {
