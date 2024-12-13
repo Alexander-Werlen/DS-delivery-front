@@ -244,8 +244,7 @@ function CrearBebidaDialog({ triggerFetchData }: CrearBebidaDialogProps) {
                                 <FormItem className="flex flex-row items-start space-x-2 space-y-0 ">
                                     <FormControl>
                                         <Checkbox
-                                            disabled={graduacionAlcoholica > 0}
-                                            checked={graduacionAlcoholica > 0 ? true : false}
+                                            checked={field.value}
                                             onCheckedChange={field.onChange}
                                         />
                                     </FormControl>
@@ -265,7 +264,8 @@ function CrearBebidaDialog({ triggerFetchData }: CrearBebidaDialogProps) {
                                 <FormItem className="flex flex-row items-start space-x-2 space-y-0 ">
                                     <FormControl>
                                         <Checkbox
-                                            checked={field.value}
+                                            disabled={graduacionAlcoholica > 0}
+                                            checked={graduacionAlcoholica > 0 ? true : false}
                                             onCheckedChange={field.onChange}
                                         />
                                     </FormControl>
