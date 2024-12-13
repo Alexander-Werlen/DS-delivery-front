@@ -1,9 +1,9 @@
 import api from "./api.ts"
 
-import { Pedido } from "../components/pedidos/tablePedidos"
+import { Pedido, PedidoResponse } from "@/shared.types.ts"
 
 export const getAllPedidos = () => {
-    return api.get("/pedido")
+    return api.get<PedidoResponse[]>("/pedido")
 }
 
 export const deletePedido = (id: number) => {

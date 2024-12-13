@@ -1,9 +1,10 @@
 import api from "./api.ts"
 
-import { Vendedor } from "../components/vendedores/tableVendedores.tsx"
+import { Vendedor, VendedorResponse } from "@/shared.types.ts"
 
 export const getAllVendedores = () => {
-    return api.get("/vendedor")
+    
+    return api.get<VendedorResponse[]>("/vendedor")
 }
 
 export const deleteVendedor = (id: number) => {

@@ -3,7 +3,8 @@ import { useEffect, useState } from "react"
 import { useToast } from "@/hooks/use-toast"
 
 import CrearClienteDialog from "./CrearClienteDialog"
-import { DataTable, Cliente } from "./tableClientes"
+import { DataTable } from "./tableClientes"
+import { Cliente } from "@/shared.types"
 
 import { getAllClientes } from "@/services/clienteService"
 

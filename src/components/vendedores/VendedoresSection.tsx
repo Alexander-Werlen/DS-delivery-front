@@ -3,8 +3,8 @@ import { useEffect, useState } from "react"
 import { useToast } from "@/hooks/use-toast"
 
 import CrearVendedorDialog from "./CrearVendedorDialog"
-import { DataTable, Vendedor } from "./tableVendedores"
-
+import { DataTable } from "./tableVendedores"
+import { Vendedor } from "@/shared.types"
 import { getAllVendedores } from "@/services/vendedorService"
 
 

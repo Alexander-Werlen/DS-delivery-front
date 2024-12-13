@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal, Eraser } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -37,26 +37,16 @@ import EditarClienteDialog from "./EditarClienteDialog.tsx"
 import EliminarClienteDialog from "./EliminarClienteDialog.tsx"
 
 import { useState } from "react"
-
-export type Cliente = {
-  id: number,
-  nombre: string,
-  apellido: string,
-  cuit: string,
-  email: string,
-  direccion: string,
-  lat: number,
-  lng: number
-}
+import { Cliente } from "@/shared.types.ts"
 
 interface DataTableProps {
   data: Cliente[],
-  triggerFetchData:  () => void
+  triggerFetchData: () => void
 }
 
-export function DataTable({data, triggerFetchData}: DataTableProps) {
-  
-  const [editClienteDialogData, setEditClienteDialogData] = useState<{open: boolean, cliente: Cliente}>({
+export function DataTable({ data, triggerFetchData }: DataTableProps) {
+
+  const [editClienteDialogData, setEditClienteDialogData] = useState<{ open: boolean, cliente: Cliente }>({
     open: false,
     cliente: {
       id: -1,
@@ -69,12 +59,15 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
       lng: 0
     }
   })
-
+  const clearFilters = () => {
+    // Clear column filters
+    table.resetColumnFilters()
+  }
   const closeEditDialog = () => {
-    setEditClienteDialogData(self => {return {open: false, cliente: self.cliente}})
+    setEditClienteDialogData(self => { return { open: false, cliente: self.cliente } })
   }
 
-  const [eliminarClienteDialogData, setEliminarClienteDialogData] = useState<{open: boolean, cliente: Cliente}>({
+  const [eliminarClienteDialogData, setEliminarClienteDialogData] = useState<{ open: boolean, cliente: Cliente }>({
     open: false,
     cliente: {
       id: -1,
@@ -89,7 +82,7 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
   })
 
   const closeEliminarDialog = () => {
-    setEliminarClienteDialogData(self => {return {open: false, cliente: self.cliente}})
+    setEliminarClienteDialogData(self => { return { open: false, cliente: self.cliente } })
   }
 
 
@@ -207,7 +200,10 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("lat")}</div>,
+      cell: ({ row }) => {
+        const formatted = Number.parseFloat(row.getValue("lat")).toFixed(2) + "°"
+        return <div className="lowercase">{formatted}</div>
+      },
     },
     {
       accessorKey: "lng",
@@ -222,15 +218,18 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("lng")}</div>,
+      cell: ({ row }) => {
+        const formatted = Number.parseFloat(row.getValue("lng")).toFixed(2) + "°"
+        return <div className="lowercase">{formatted}</div>
+      },
     },
-    
+
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
         const cliente = row.original
-  
+
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -241,16 +240,16 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => setEditClienteDialogData({open: true, cliente: cliente})}
+                onClick={() => setEditClienteDialogData({ open: true, cliente: cliente })}
               >
                 Editar
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => setEliminarClienteDialogData({open: true, cliente: cliente})}
+                onClick={() => setEliminarClienteDialogData({ open: true, cliente: cliente })}
               >
                 Eliminar
               </DropdownMenuItem>
-              
+
             </DropdownMenuContent>
           </DropdownMenu>
         )
@@ -287,156 +286,163 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
 
   return (
     <>
-    <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter id..."
-          value={(table.getColumn("id")?.getFilterValue() as number) ?? ""}
-          onChange={(event) =>
-            table.getColumn("id")?.setFilterValue(event.target.value)
-          }
-          className="max-w-40 mr-2"
+      <div className="w-full">
+        <div className="flex items-center py-4">
+          <Input
+            placeholder="Filter id..."
+            value={(table.getColumn("id")?.getFilterValue() as number) ?? ""}
+            onChange={(event) =>
+              table.getColumn("id")?.setFilterValue(event.target.value)
+            }
+            className="max-w-40 mr-2"
           />
-        <Input
-          placeholder="Filter nombre..."
-          value={(table.getColumn("nombre")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("nombre")?.setFilterValue(event.target.value)
-          }
-          className="max-w-40 mr-2"
+          <Input
+            placeholder="Filter nombre..."
+            value={(table.getColumn("nombre")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("nombre")?.setFilterValue(event.target.value)
+            }
+            className="max-w-40 mr-2"
           />
-        <Input
-          placeholder="Filter apellido..."
-          value={(table.getColumn("apellido")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("apellido")?.setFilterValue(event.target.value)
-          }
-          className="max-w-40 mr-2"
+          <Input
+            placeholder="Filter apellido..."
+            value={(table.getColumn("apellido")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("apellido")?.setFilterValue(event.target.value)
+            }
+            className="max-w-40 mr-2"
           />
-        <Input
-          placeholder="Filter cuit..."
-          value={(table.getColumn("cuit")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("cuit")?.setFilterValue(event.target.value)
-          }
-          className="max-w-40 mr-2"
+          <Input
+            placeholder="Filter cuit..."
+            value={(table.getColumn("cuit")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("cuit")?.setFilterValue(event.target.value)
+            }
+            className="max-w-40 mr-2"
           />
-        <Input
-          placeholder="Filter dirección..."
-          value={(table.getColumn("direccion")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("direccion")?.setFilterValue(event.target.value)
-          }
-          className="max-w-40 mr-2"
+          <Input
+            placeholder="Filter dirección..."
+            value={(table.getColumn("direccion")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("direccion")?.setFilterValue(event.target.value)
+            }
+            className="max-w-40 mr-2"
           />
-        <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-40 mr-2"
+          <Input
+            placeholder="Filter emails..."
+            value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("email")?.setFilterValue(event.target.value)
+            }
+            className="max-w-40 mr-2"
           />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) =>
-                    column.toggleVisibility(!!value)
-                  }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+          <Button
+            variant="ghost"
+            className="ml-2"
+            onClick={clearFilters}
+          >
+            <Eraser className="h-5 w-5 mr-4" />
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
                   return (
-                    <TableHead key={header.id} className="text-center">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
                   )
                 })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="text-center">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} className="text-center">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                      </TableHead>
+                    )
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
                   >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="text-center">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
             >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
             >
-            Next
-          </Button>
+              Next
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
-    <EditarClienteDialog open={editClienteDialogData.open} clienteData={editClienteDialogData.cliente} closeEditDialog={closeEditDialog} triggerFetchData={triggerFetchData}/>
-    <EliminarClienteDialog open={eliminarClienteDialogData.open} clienteData={eliminarClienteDialogData.cliente} closeEliminarDialog={closeEliminarDialog} triggerFetchData={triggerFetchData}/>
+      <EditarClienteDialog open={editClienteDialogData.open} clienteData={editClienteDialogData.cliente} closeEditDialog={closeEditDialog} triggerFetchData={triggerFetchData} />
+      <EliminarClienteDialog open={eliminarClienteDialogData.open} clienteData={eliminarClienteDialogData.cliente} closeEliminarDialog={closeEliminarDialog} triggerFetchData={triggerFetchData} />
     </>
   )
 }
