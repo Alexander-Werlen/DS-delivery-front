@@ -44,12 +44,12 @@ import { ItemMenu, Comida, Bebida } from "@/shared.types.ts"
 
 interface DataTableProps {
   data: ItemMenu[],
-  triggerFetchData:  () => void
+  triggerFetchData: () => void
 }
 
-export function DataTable({data, triggerFetchData}: DataTableProps) {
-  
-  const [editItemMenuDialogData, setEditItemMenuDialogData] = useState<{openComida: boolean, openBebida: boolean, itemComida: Comida, itemBebida: Bebida}>({
+export function DataTable({ data, triggerFetchData }: DataTableProps) {
+
+  const [editItemMenuDialogData, setEditItemMenuDialogData] = useState<{ openComida: boolean, openBebida: boolean, itemComida: Comida, itemBebida: Bebida }>({
     openComida: false,
     openBebida: false,
     itemComida: {
@@ -82,10 +82,10 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
   })
 
   const closeEditDialog = () => {
-    setEditItemMenuDialogData(self => {return {openComida: false, openBebida: false, itemComida: self.itemComida, itemBebida: self.itemBebida}})
+    setEditItemMenuDialogData(self => { return { openComida: false, openBebida: false, itemComida: self.itemComida, itemBebida: self.itemBebida } })
   }
 
-  const [eliminarItemMenuDialogData, setEliminarItemMenuDialogData] = useState<{open: boolean,  itemMenu: ItemMenu}>({
+  const [eliminarItemMenuDialogData, setEliminarItemMenuDialogData] = useState<{ open: boolean, itemMenu: ItemMenu }>({
     open: false,
     itemMenu: {
       id: -1,
@@ -97,7 +97,7 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
       vendedor: "",
       esAptoVegano: false,
       esAptoCeliaco: false,
-      peso:0,
+      peso: 0,
       volumen: 0,
       graduacionAlcoholica: 0,
       esAlcoholica: false,
@@ -106,7 +106,7 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
   })
 
   const closeEliminarDialog = () => {
-    setEliminarItemMenuDialogData(self => {return {open: false,  itemMenu: self.itemMenu}})
+    setEliminarItemMenuDialogData(self => { return { open: false, itemMenu: self.itemMenu } })
   }
 
   //table logic
@@ -178,7 +178,11 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("precio")}</div>,
+      cell: ({ row }) => {
+        const amount = Number.parseFloat(row.getValue("precio"))
+        const formatted = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" }).format(amount)
+        return <div className="">{formatted}</div>
+      },
 
     },
     {
@@ -299,7 +303,7 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="">{row.getValue("esAlcoholica") === true ? "X":row.getValue("esAlcoholica") === false ? "-" : ""}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("esAlcoholica") === true ? "X" : row.getValue("esAlcoholica") === false ? "-" : ""}</div>,
     },
     {
       accessorKey: "esGaseosa",
@@ -314,15 +318,15 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="">{row.getValue("esGaseosa") === true ? "X":row.getValue("esGaseosa") === false ? "-" : ""}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("esGaseosa") === true ? "X" : row.getValue("esGaseosa") === false ? "-" : ""}</div>,
     },
-    
+
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
         const itemMenu = row.original
-  
+
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -334,10 +338,10 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
             <DropdownMenuContent align="end">
               <DropdownMenuItem
                 onClick={() => {
-                  if(itemMenu.categoria === "COMIDA") {
-                    setEditItemMenuDialogData(self => {return {openComida: true, openBebida: false, itemComida: (itemMenu as Comida), itemBebida: self.itemBebida}})
+                  if (itemMenu.categoria === "COMIDA") {
+                    setEditItemMenuDialogData(self => { return { openComida: true, openBebida: false, itemComida: (itemMenu as Comida), itemBebida: self.itemBebida } })
                   } else {
-                    setEditItemMenuDialogData(self => {return {openComida: false, openBebida: true, itemComida: self.itemComida, itemBebida: (itemMenu as Bebida)}})
+                    setEditItemMenuDialogData(self => { return { openComida: false, openBebida: true, itemComida: self.itemComida, itemBebida: (itemMenu as Bebida) } })
                   }
                 }}
               >
@@ -345,12 +349,12 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
-                  setEliminarItemMenuDialogData(() => {return {open: true, itemMenu: itemMenu}})
+                  setEliminarItemMenuDialogData(() => { return { open: true, itemMenu: itemMenu } })
                 }}
               >
                 Eliminar
               </DropdownMenuItem>
-              
+
             </DropdownMenuContent>
           </DropdownMenu>
         )
@@ -387,137 +391,137 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
 
   return (
     <>
-    <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter id..."
-          value={(table.getColumn("id")?.getFilterValue() as number) ?? ""}
-          onChange={(event) =>
-            table.getColumn("id")?.setFilterValue(event.target.value)
-          }
-          className="max-w-40 mr-2"
+      <div className="w-full">
+        <div className="flex items-center py-4">
+          <Input
+            placeholder="Filter id..."
+            value={(table.getColumn("id")?.getFilterValue() as number) ?? ""}
+            onChange={(event) =>
+              table.getColumn("id")?.setFilterValue(event.target.value)
+            }
+            className="max-w-40 mr-2"
           />
-        <Input
-          placeholder="Filter nombre..."
-          value={(table.getColumn("nombre")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("nombre")?.setFilterValue(event.target.value)
-          }
-          className="max-w-40 mr-2"
+          <Input
+            placeholder="Filter nombre..."
+            value={(table.getColumn("nombre")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("nombre")?.setFilterValue(event.target.value)
+            }
+            className="max-w-40 mr-2"
           />
-        <Select onValueChange={(value) => table.getColumn("categoria")?.setFilterValue(value)}>
-          <SelectTrigger className="w-40">
-            <SelectValue placeholder="Categoria" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="A">TODOS</SelectItem>
-            <SelectItem value="COMIDA">COMIDA</SelectItem>
-            <SelectItem value="BEBIDA">BEBIDA</SelectItem>
-          </SelectContent>
-        </Select>
-       
+          <Select onValueChange={(value) => table.getColumn("categoria")?.setFilterValue(value)}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Categoria" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="A">TODOS</SelectItem>
+              <SelectItem value="COMIDA">COMIDA</SelectItem>
+              <SelectItem value="BEBIDA">BEBIDA</SelectItem>
+            </SelectContent>
+          </Select>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) =>
-                    column.toggleVisibility(!!value)
-                  }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
                   return (
-                    <TableHead key={header.id} className="text-center">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
                   )
                 })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="text-center">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} className="text-center">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                      </TableHead>
+                    )
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
                   >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="text-center">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
             >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
             >
-            Next
-          </Button>
+              Next
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
-    <EditarComidaDialog open={editItemMenuDialogData.openComida} itemMenuData={editItemMenuDialogData.itemComida} closeEditDialog={closeEditDialog} triggerFetchData={triggerFetchData}/>
-    <EditarBebidaDialog open={editItemMenuDialogData.openBebida} itemMenuData={editItemMenuDialogData.itemBebida} closeEditDialog={closeEditDialog} triggerFetchData={triggerFetchData}/>
-    <EliminarItemMenuDialog open={eliminarItemMenuDialogData.open} itemMenuData={eliminarItemMenuDialogData.itemMenu} closeEliminarDialog={closeEliminarDialog} triggerFetchData={triggerFetchData}/>
+      <EditarComidaDialog open={editItemMenuDialogData.openComida} itemMenuData={editItemMenuDialogData.itemComida} closeEditDialog={closeEditDialog} triggerFetchData={triggerFetchData} />
+      <EditarBebidaDialog open={editItemMenuDialogData.openBebida} itemMenuData={editItemMenuDialogData.itemBebida} closeEditDialog={closeEditDialog} triggerFetchData={triggerFetchData} />
+      <EliminarItemMenuDialog open={eliminarItemMenuDialogData.open} itemMenuData={eliminarItemMenuDialogData.itemMenu} closeEliminarDialog={closeEliminarDialog} triggerFetchData={triggerFetchData} />
     </>
   )
 }

@@ -180,7 +180,11 @@ export function DataTable({ data, vendedores, clientes, triggerFetchData }: Data
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("precio_total")}</div>,
+      cell: ({ row }) => {
+        const amount = Number.parseFloat(row.getValue("precio_total"))
+        const formatted = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" }).format(amount)
+        return <div className="">{formatted}</div>
+      },
     },
     {
       accessorKey: "pago",
@@ -195,7 +199,7 @@ export function DataTable({ data, vendedores, clientes, triggerFetchData }: Data
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("pago")}</div>,
+      cell: ({ row }) => <div className="lowercase">{row.getValue("pago") ? row.getValue("pago") : "-"}</div>,
     },
     {
       id: "actions",
