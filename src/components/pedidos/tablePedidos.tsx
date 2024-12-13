@@ -125,7 +125,7 @@ export function DataTable({ data, vendedores, clientes, triggerFetchData }: Data
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("estado")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("estado")}</div>,
     },
     {
       accessorKey: "vendedor",
