@@ -34,7 +34,7 @@ import {
 
 import EliminarItemMenuDialog from "./EliminarItemMenuDialog.tsx"
 
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select.tsx"
 import EditarBebidaDialog from "./EditarBebidaDialog.tsx"
 import EditarComidaDialog from "./EditarComidaDialog.tsx"
@@ -60,13 +60,11 @@ export function DataTable({ data, triggerFetchData }: DataTableProps) {
     }
     setAdvancedFilters(filters)
   }
-  const categoriaSelectRef = useRef<HTMLButtonElement>(null)
+  const [categoriaValue, setCategoriaValue] = useState<string>("")
   const clearFilters = () => {
     // Clear column filters
     table.resetColumnFilters()
-    if (categoriaSelectRef.current) {
-      categoriaSelectRef.current.textContent = "Categoria"
-    }
+    setCategoriaValue("")
     setAdvancedFilters({})
   }
   useEffect(() => {
@@ -433,8 +431,12 @@ export function DataTable({ data, triggerFetchData }: DataTableProps) {
             }
             className="max-w-40 mr-2"
           />
-          <Select onValueChange={(value) => table.getColumn("categoria")?.setFilterValue(value)}>
-            <SelectTrigger ref={categoriaSelectRef} className="w-40">
+          <Select value={categoriaValue}
+            onValueChange={(value) => {
+              setCategoriaValue(value)
+              table.getColumn("categoria")?.setFilterValue(value === "all" ? "" : value)
+            }}>
+            <SelectTrigger className="w-40">
               <SelectValue placeholder="Categoria" />
             </SelectTrigger>
             <SelectContent>

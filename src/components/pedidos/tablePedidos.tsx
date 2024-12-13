@@ -36,7 +36,7 @@ import {
 import EditarPedidoDialog from "./EditarPedidoDialog.tsx"
 import EliminarPedidoDialog from "./EliminarPedidoDialog.tsx"
 
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select.tsx"
 import { Pedido } from "@/shared.types.ts"
 
@@ -66,21 +66,17 @@ export function DataTable({ data, vendedores, clientes, triggerFetchData }: Data
       estado: "RECIBIDO"
     }
   })
-  const estadoSelectRef = useRef<HTMLButtonElement>(null)
-  const vendedorSelectRef = useRef<HTMLButtonElement>(null)
-  const clienteSelectRef = useRef<HTMLButtonElement>(null)
+  // Add after existing useState declarations
+  const [estadoValue, setEstadoValue] = useState<string>("")
+  const [vendedorValue, setVendedorValue] = useState<string>("")
+  const [clienteValue, setClienteValue] = useState<string>("")
   const clearFilters = () => {
     // Clear column filters
+    setEstadoValue("")
+    setVendedorValue("")
+    setClienteValue("")
     table.resetColumnFilters()
-    if (estadoSelectRef.current) {
-      estadoSelectRef.current.textContent = "Estado"
-    }
-    if (vendedorSelectRef.current) {
-      vendedorSelectRef.current.textContent = "Vendedor"
-    }
-    if (clienteSelectRef.current) {
-      clienteSelectRef.current.textContent = "Cliente"
-    }
+
   }
   const closeEditDialog = () => {
     setEditPedidoDialogData(self => { return { open: false, pedido: self.pedido } })
@@ -288,8 +284,11 @@ export function DataTable({ data, vendedores, clientes, triggerFetchData }: Data
             }
             className="max-w-40 mr-2"
           />
-          <Select onValueChange={(value) => table.getColumn("estado")?.setFilterValue(value)}>
-            <SelectTrigger ref={estadoSelectRef} className="max-w-40 mr-2">
+          <Select value={estadoValue} onValueChange={(value) => {
+            setEstadoValue(value)
+            table.getColumn("estado")?.setFilterValue(value)
+          }}>
+            <SelectTrigger className="max-w-40 mr-2">
               <SelectValue placeholder="Estado" />
             </SelectTrigger>
             <SelectContent>
@@ -300,8 +299,12 @@ export function DataTable({ data, vendedores, clientes, triggerFetchData }: Data
               <SelectItem value="ENVIADO">ENVIADO</SelectItem>
             </SelectContent>
           </Select>
-          <Select onValueChange={(value) => table.getColumn("vendedor")?.setFilterValue(value === "all" ? "" : value)}>
-            <SelectTrigger ref={vendedorSelectRef} className="max-w-40 mr-2">
+          <Select value={vendedorValue}
+            onValueChange={(value) => {
+              setVendedorValue(value)
+              table.getColumn("vendedor")?.setFilterValue(value === "all" ? "" : value)
+            }}>
+            <SelectTrigger className="max-w-40 mr-2">
               <SelectValue placeholder="Vendedor" />
             </SelectTrigger>
             <SelectContent>
@@ -314,8 +317,12 @@ export function DataTable({ data, vendedores, clientes, triggerFetchData }: Data
             </SelectContent>
           </Select>
 
-          <Select onValueChange={(value) => table.getColumn("cliente")?.setFilterValue(value === "all" ? "" : value)}>
-            <SelectTrigger ref={clienteSelectRef} className="max-w-40 mr-2">
+          <Select value={clienteValue}
+            onValueChange={(value) => {
+              setClienteValue(value)
+              table.getColumn("cliente")?.setFilterValue(value === "all" ? "" : value)
+            }}>
+            <SelectTrigger className="max-w-40 mr-2">
               <SelectValue placeholder="Cliente" />
             </SelectTrigger>
             <SelectContent>
