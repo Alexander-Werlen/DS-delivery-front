@@ -48,8 +48,7 @@ export default function EliminarVendedorDialog({open, vendedorData, closeElimina
             <AlertDialogHeader>
             <AlertDialogTitle>Estas seguro que quieres ELIMINAR al vendedor?</AlertDialogTitle>
             <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
+                Esta acción no se puede deshacer. Esta acción eliminará permanentemente el vendedor de la base de datos.
             </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

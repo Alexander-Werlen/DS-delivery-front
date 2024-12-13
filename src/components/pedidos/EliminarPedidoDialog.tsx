@@ -49,8 +49,7 @@ export default function EliminarPedidoDialog({open, pedidoData, closeEliminarDia
             <AlertDialogHeader>
             <AlertDialogTitle>Estas seguro que quieres ELIMINAR al pedido?</AlertDialogTitle>
             <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
+                Esta acción no se puede deshacer. Esta acción eliminará permanentemente el pedido de la base de datos.
             </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

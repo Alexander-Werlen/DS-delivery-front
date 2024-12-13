@@ -49,8 +49,7 @@ export default function EliminarClienteDialog({open, clienteData, closeEliminarD
             <AlertDialogHeader>
             <AlertDialogTitle>Estas seguro que quieres ELIMINAR al cliente?</AlertDialogTitle>
             <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
+                Esta acción no se puede deshacer. Esta acción eliminará permanentemente el cliente de la base de datos.
             </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

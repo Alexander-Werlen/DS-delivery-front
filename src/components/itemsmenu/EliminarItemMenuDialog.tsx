@@ -47,8 +47,7 @@ export default function EliminarItemMenuDialog({open, itemMenuData, closeElimina
             <AlertDialogHeader>
             <AlertDialogTitle>Estas seguro que quieres ELIMINAR al item menu?</AlertDialogTitle>
             <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
+                Esta acción no se puede deshacer. Esta acción eliminará permanentemente el item menu de la base de datos.
             </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
