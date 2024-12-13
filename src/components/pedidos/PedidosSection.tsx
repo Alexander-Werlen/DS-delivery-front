@@ -46,10 +46,10 @@ function PedidosSection() {
       ).filter((v) => v !== null);
       seenIds.clear();
       const clientesResponse: Cliente[] = response.data.map(p => {
-        if (seenIds.has(p.vendedor.id)) {
+        if (seenIds.has(p.cliente.id)) {
           return null;
         }
-        seenIds.add(p.vendedor.id);
+        seenIds.add(p.cliente.id);
         return {
           "id": p.cliente.id,
           "nombre": p.cliente.nombre,
@@ -79,16 +79,13 @@ function PedidosSection() {
     triggerFetchPedidos()
   }, [])
 
-  const datosTabla = listaPedidos
-  const datosClientes = clientes
-  const datosVendedores = vendedores
   // Parse data from listapedidos to get all clients and vendors
 
 
   return (
     <div className="mt-2">
       <h1 className="mt-5 text-2xl font-bold">TABLA PEDIDOS</h1>
-      <DataTable data={datosTabla} clientes={datosClientes} vendedores={datosVendedores} triggerFetchData={triggerFetchPedidos} />
+      <DataTable data={listaPedidos} clientes={clientes} vendedores={vendedores} triggerFetchData={triggerFetchPedidos} />
 
       <CrearPedidoDialog triggerFetchData={triggerFetchPedidos} />
     </div>
