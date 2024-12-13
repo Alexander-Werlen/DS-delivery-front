@@ -2,7 +2,6 @@
  
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 
 import { useToast } from "@/hooks/use-toast"
 
@@ -26,11 +25,12 @@ import {
     DialogTitle,
 } from "../generales/dialog"
 
-import {Pedido} from "./tablePedidos"
+import { Pedido } from "@/shared.types"
 import { useEffect } from "react"
 
 import { editarPedido } from "@/services/pedidoService"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { PedidosEditFormSchema, PedidosEditForm } from "./schemas"
 
 
 interface EditarPedidoDialogProps {
@@ -40,20 +40,7 @@ interface EditarPedidoDialogProps {
     triggerFetchData: () => void
 }
 
-const formSchema = z.object({
-    vendedor_id: z.coerce.number({
-        invalid_type_error: "vendedor_id must be a number.",
-    }),
-    cliente_id: z.coerce.number({
-        invalid_type_error: "cliente_id must be a number.",
-    }),
-    estado: z.union([
-        z.literal("RECIBIDO"),
-        z.literal("ENVIADO"),
-        z.literal("PREPARADO"),
-        z.literal("ACEPTADO"),
-    ])
-})
+const formSchema = PedidosEditFormSchema
 
 function EditarPedidoDialog({open, pedidoData, closeEditDialog, triggerFetchData}: EditarPedidoDialogProps) {
     const { toast } = useToast()
@@ -74,7 +61,7 @@ function EditarPedidoDialog({open, pedidoData, closeEditDialog, triggerFetchData
     
     //form.reset(pedidoData)
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    function onSubmit(values: PedidosEditForm) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
 

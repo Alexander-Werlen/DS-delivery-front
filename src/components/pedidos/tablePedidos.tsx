@@ -38,15 +38,9 @@ import EliminarPedidoDialog from "./EliminarPedidoDialog.tsx"
 
 import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select.tsx"
+import { Pedido } from "@/shared.types.ts"
 
-export type Pedido = {
-  id: number,
-  pago: string | null,
-  vendedor_id: number,
-  cliente_id: number,
-  precio_total: number,
-  estado: "RECIBIDO" | "ENVIADO" | "PREPARADO" | "ACEPTADO"
-}
+
 
 interface DataTableProps {
   data: Pedido[],

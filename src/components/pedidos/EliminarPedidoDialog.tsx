@@ -8,7 +8,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
   } from "@/components/ui/alert-dialog"
-import { Pedido } from "./tablePedidos"
+import { Pedido } from "@/shared.types"
 
 import { useToast } from "@/hooks/use-toast"
 

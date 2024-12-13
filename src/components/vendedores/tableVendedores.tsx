@@ -37,15 +37,9 @@ import EditarVendedorDialog from "./EditarVendedorDialog.tsx"
 import EliminarVendedorDialog from "./EliminarVendedorDialog.tsx"
 
 import { useState } from "react"
+import { Vendedor } from "@/shared.types.ts"
 
-export type Vendedor = {
-  id: number,
-  nombre: string,
-  cuit: string,
-  direccion: string,
-  lat: number,
-  lng: number
-}
+
 
 interface DataTableProps {
   data: Vendedor[],

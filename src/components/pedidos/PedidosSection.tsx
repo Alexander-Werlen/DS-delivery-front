@@ -3,7 +3,8 @@ import { useEffect, useState } from "react"
 import { useToast } from "@/hooks/use-toast"
 
 import CrearPedidoDialog from "./CrearPedidoDialog"
-import { DataTable, Pedido } from "./tablePedidos"
+import { DataTable } from "./tablePedidos"
+import { Pedido } from "@/shared.types"
 
 import { getAllPedidos } from "@/services/pedidoService"
 
@@ -18,7 +19,7 @@ function PedidosSection() {
         const pedidosResponse: Pedido[] = response.data.map((c) => {
           return {
             "id": c.id,
-            "pago": c.pago,
+            "pago": c.pago?.metodo,
             "vendedor_id": c.vendedor.id,
             "cliente_id": c.cliente.id,
             "precio_total": c.precioAcumulado,

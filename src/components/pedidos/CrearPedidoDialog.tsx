@@ -2,7 +2,6 @@
  
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 
 import { useToast } from "@/hooks/use-toast"
 
@@ -29,15 +28,9 @@ import {
 import { useState } from "react"
 
 import { crearPedido } from "@/services/pedidoService"
+import { PedidosCreateFormSchema, PedidosCreateForm } from "./schemas"
 
-const formSchema = z.object({
-    vendedor_id: z.coerce.number({
-        invalid_type_error: "vendedor_id must be a number.",
-    }),
-    cliente_id: z.coerce.number({
-        invalid_type_error: "cliente_id must be a number.",
-    }),
-})
+const formSchema = PedidosCreateFormSchema
 
 interface CrearPedidoDialogProps {
     triggerFetchData: () => void
@@ -57,7 +50,7 @@ function CrearPedidoDialog({triggerFetchData}: CrearPedidoDialogProps) {
         },
     })
     // 2. Define a submit handler.
-    function onSubmit(values) {
+    function onSubmit(values : PedidosCreateForm) {
         crearPedido({...values, "estado": "RECIBIDO", "pago": "", "id": 0, "precio_total": 0}).then(() => {
             toast({
                 variant: "default",
@@ -118,7 +111,6 @@ function CrearPedidoDialog({triggerFetchData}: CrearPedidoDialogProps) {
                     </FormItem>
                 )}
                 />
-                        
                 <Button type="submit" className="float-left w-32">CREAR</Button>
                 <DialogClose asChild className="float-right">
                     <Button type="button" className="w-32">

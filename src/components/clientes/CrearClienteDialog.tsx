@@ -2,7 +2,6 @@
  
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 
 import { useToast } from "@/hooks/use-toast"
 
@@ -29,25 +28,9 @@ import {
 import { useState } from "react"
 
 import { crearCliente } from "@/services/clienteService"
+import { ClienteForm, ClienteFormSchema } from "./schemas"
 
-const formSchema = z.object({
-    nombre: z.string(),
-    apellido: z.string(),
-    email: z.string().email(),
-    cuit: z.string().min(5, {
-        message: "CUIT is too short.",
-    }).includes("-", 
-        {message: "Invalid CUIT format."}
-    ),
-    direccion: z.string(),
-    lat: z.coerce.number({
-        invalid_type_error: "Lat must be a number.",
-    }),
-    lng: z.coerce.number({
-        invalid_type_error: "Lng must be a number.",
-    }),
-})
-
+const formSchema = ClienteFormSchema;
 interface CrearClienteDialogProps {
     triggerFetchData: () => void
 }
@@ -71,7 +54,7 @@ function CrearClienteDialog({triggerFetchData}: CrearClienteDialogProps) {
         },
     })
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    function onSubmit(values: ClienteForm) {
         crearCliente({...values, "id": 0}).then(() => {
             toast({
                 variant: "default",

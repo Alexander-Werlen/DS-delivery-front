@@ -39,53 +39,8 @@ import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select.tsx"
 import EditarBebidaDialog from "./EditarBebidaDialog.tsx"
 import EditarComidaDialog from "./EditarComidaDialog.tsx"
+import { ItemMenu, Comida, Bebida } from "@/shared.types.ts"
 
-
-export type ItemMenu = {
-  id: number,
-  nombre: string,
-  descripcion: string,
-  precio: number,
-  categoria: "COMIDA" | "BEBIDA",
-  vendedor_id: number,
-  vendedor: string,
-  esAptoVegano: boolean,
-  esAptoCeliaco: boolean,
-  peso: number | null,
-  volumen: number | null,
-  graduacionAlcoholica: number | null,
-  esAlcoholica: boolean | null,
-  esGaseosa: boolean | null
-}
-
-export type Comida = {
-  id: number,
-  nombre: string,
-  descripcion: string,
-  precio: number,
-  categoria: "COMIDA",
-  vendedor_id: number,
-  vendedor: string,
-  esAptoVegano: boolean,
-  esAptoCeliaco: boolean,
-  peso: number,
-}
-
-export type Bebida = {
-  id: number,
-  nombre: string,
-  descripcion: string,
-  precio: number,
-  categoria: "BEBIDA",
-  vendedor_id: number,
-  vendedor: string,
-  esAptoVegano: boolean,
-  esAptoCeliaco: boolean,
-  volumen: number ,
-  graduacionAlcoholica: number,
-  esAlcoholica: boolean,
-  esGaseosa: boolean
-}
 
 interface DataTableProps {
   data: ItemMenu[],

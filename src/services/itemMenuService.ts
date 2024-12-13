@@ -1,9 +1,9 @@
 import api from "./api.ts"
 
-import {Bebida, Comida } from "../components/itemsmenu/tableItemsMenu.tsx"
+import {Bebida, Comida, MenuResponse } from "@/shared.types"
 
 export const getAllItemsMenu = () => {
-    return api.get("/item-menu")
+    return api.get<MenuResponse>("/item-menu")
 }
 
 export const deleteItemMenu = (id: number) => {
@@ -19,7 +19,7 @@ export const crearBebida = (data: Bebida) => {
             "precio": data.precio,
             "categoria": "BEBIDA",
             "vendedor": {
-                "id": data.vendedor,
+                "id": data.vendedor_id,
             },
             "esAptoCeliaco": data.esAptoCeliaco,
             "esAptoVegano": data.esAptoVegano,

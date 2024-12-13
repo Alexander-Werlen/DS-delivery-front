@@ -37,17 +37,7 @@ import EditarClienteDialog from "./EditarClienteDialog.tsx"
 import EliminarClienteDialog from "./EliminarClienteDialog.tsx"
 
 import { useState } from "react"
-
-export type Cliente = {
-  id: number,
-  nombre: string,
-  apellido: string,
-  cuit: string,
-  email: string,
-  direccion: string,
-  lat: number,
-  lng: number
-}
+import { Cliente } from "@/shared.types.ts"
 
 interface DataTableProps {
   data: Cliente[],

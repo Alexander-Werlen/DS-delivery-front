@@ -8,7 +8,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
   } from "@/components/ui/alert-dialog"
-import { Vendedor } from "./tableVendedores"
+import { Vendedor } from "@/shared.types"
 
 import { useToast } from "@/hooks/use-toast"
 

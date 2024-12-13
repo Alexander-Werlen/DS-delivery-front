@@ -3,7 +3,8 @@ import { useEffect, useState } from "react"
 import { useToast } from "@/hooks/use-toast"
 
 import CrearComidaDialog from "./CrearComidaDialog"
-import { DataTable, ItemMenu } from "./tableItemsMenu"
+import { DataTable } from "./tableItemsMenu"
+import { ItemMenu } from "@/shared.types"
 import CrearBebidaDialog from "./CrearBebidaDialog"
 
 import { getAllItemsMenu } from "@/services/itemMenuService.ts"

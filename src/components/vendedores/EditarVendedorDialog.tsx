@@ -2,8 +2,8 @@
  
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
-
+import { VendededorFormSchema } from "./schemas"
+import type { VendedorForm } from "./schemas"
 import { useToast } from "@/hooks/use-toast"
 
 import { Button } from "@/components/ui/button"
@@ -26,7 +26,7 @@ import {
     DialogTitle,
 } from "../generales/dialog"
 
-import {Vendedor} from "./tableVendedores"
+import { Vendedor } from "@/shared.types"
 import { useEffect } from "react"
 
 import { editarVendedor } from "@/services/vendedorService"
@@ -39,21 +39,7 @@ interface EditarVendedorDialogProps {
     triggerFetchData: () => void
 }
 
-const formSchema = z.object({
-    nombre: z.string(),
-    cuit: z.string().min(5, {
-        message: "CUIT is too short.",
-    }).includes("-", 
-        {message: "Invalid CUIT format."}
-    ),
-    direccion: z.string(),
-    lat: z.coerce.number({
-        invalid_type_error: "Lat must be a number.",
-    }),
-    lng: z.coerce.number({
-        invalid_type_error: "Lng must be a number.",
-    }),
-})
+const formSchema = VendededorFormSchema;
 
 function EditarVendedorDialog({open, vendedorData, closeEditDialog, triggerFetchData}: EditarVendedorDialogProps) {
     const { toast } = useToast()
@@ -77,7 +63,7 @@ function EditarVendedorDialog({open, vendedorData, closeEditDialog, triggerFetch
     
     //form.reset(vendedorData)
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    function onSubmit(values: VendedorForm) {
         editarVendedor({...values, "id": vendedorData.id}).then(() => {
             triggerFetchData()
             toast({
