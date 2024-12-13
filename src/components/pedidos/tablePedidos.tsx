@@ -40,21 +40,27 @@ import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select.tsx"
 import { Pedido } from "@/shared.types.ts"
 
-
+type IdNamePair = {
+  id: number,
+  nombre: string
+}
 
 interface DataTableProps {
   data: Pedido[],
-  triggerFetchData:  () => void
+  vendedores: IdNamePair[],
+  clientes: IdNamePair[],
+  triggerFetchData: () => void
 }
 
-export function DataTable({data, triggerFetchData}: DataTableProps) {
-  
-  const [editPedidoDialogData, setEditPedidoDialogData] = useState<{open: boolean, pedido: Pedido}>({
+export function DataTable({ data, vendedores, clientes, triggerFetchData }: DataTableProps) {
+  const [editPedidoDialogData, setEditPedidoDialogData] = useState<{ open: boolean, pedido: Pedido }>({
     open: false,
     pedido: {
       id: -1,
       pago: "",
       vendedor_id: -1,
+      vendedor: "",
+      cliente: "",
       cliente_id: -1,
       precio_total: -1,
       estado: "RECIBIDO"
@@ -62,15 +68,17 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
   })
 
   const closeEditDialog = () => {
-    setEditPedidoDialogData(self => {return {open: false, pedido: self.pedido}})
+    setEditPedidoDialogData(self => { return { open: false, pedido: self.pedido } })
   }
 
-  const [eliminarPedidoDialogData, setEliminarPedidoDialogData] = useState<{open: boolean, pedido: Pedido}>({
+  const [eliminarPedidoDialogData, setEliminarPedidoDialogData] = useState<{ open: boolean, pedido: Pedido }>({
     open: false,
     pedido: {
       id: -1,
       pago: "",
+      vendedor: "",
       vendedor_id: -1,
+      cliente: "",
       cliente_id: -1,
       precio_total: -1,
       estado: "RECIBIDO"
@@ -78,7 +86,7 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
   })
 
   const closeEliminarDialog = () => {
-    setEliminarPedidoDialogData(self => {return {open: false, pedido: self.pedido}})
+    setEliminarPedidoDialogData(self => { return { open: false, pedido: self.pedido } })
   }
 
 
@@ -120,40 +128,40 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
       cell: ({ row }) => <div className="lowercase">{row.getValue("estado")}</div>,
     },
     {
-      accessorKey: "vendedor_id",
+      accessorKey: "vendedor",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Vendedor_id
+            Vendedor
             <ArrowUpDown />
           </Button>
         )
       },
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("vendedor_id")}</div>
+        <div className="capitalize">{row.getValue("vendedor")}</div>
       ),
       enableSorting: true,
       enableHiding: false,
       filterFn: "equalsString"
     },
     {
-      accessorKey: "cliente_id",
+      accessorKey: "cliente",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Cliente_id
+            Cliente
             <ArrowUpDown />
           </Button>
         )
       },
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("cliente_id")}</div>
+        <div className="capitalize">{row.getValue("cliente")}</div>
       ),
       enableSorting: true,
       enableHiding: false,
@@ -194,7 +202,7 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
       enableHiding: false,
       cell: ({ row }) => {
         const pedido = row.original
-  
+
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -205,16 +213,16 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => setEditPedidoDialogData({open: true, pedido: pedido})}
+                onClick={() => setEditPedidoDialogData({ open: true, pedido: pedido })}
               >
                 Editar
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => setEliminarPedidoDialogData({open: true, pedido: pedido})}
+                onClick={() => setEliminarPedidoDialogData({ open: true, pedido: pedido })}
               >
                 Eliminar
               </DropdownMenuItem>
-              
+
             </DropdownMenuContent>
           </DropdownMenu>
         )
@@ -251,144 +259,155 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
 
   return (
     <>
-    <div className="w-full">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter id..."
-          value={(table.getColumn("id")?.getFilterValue() as number) ?? ""}
-          onChange={(event) =>
-            table.getColumn("id")?.setFilterValue(event.target.value)
-          }
-          className="max-w-40 mr-2"
+      <div className="w-full">
+        <div className="flex items-center py-4">
+          <Input
+            placeholder="Filter id..."
+            value={(table.getColumn("id")?.getFilterValue() as number) ?? ""}
+            onChange={(event) =>
+              table.getColumn("id")?.setFilterValue(event.target.value)
+            }
+            className="max-w-40 mr-2"
           />
-        <Select onValueChange={(value) => table.getColumn("estado")?.setFilterValue(value)}>
-          <SelectTrigger className="max-w-40 mr-2">
-            <SelectValue placeholder="estado" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="O">TODOS</SelectItem>
-            <SelectItem value="RECIBIDO">RECIBIDO</SelectItem>
-            <SelectItem value="ACEPTADO">ACEPTADO</SelectItem>
-            <SelectItem value="PREPARADO">PREPARADO</SelectItem>
-            <SelectItem value="ENVIADO">ENVIADO</SelectItem>
-          </SelectContent>
-        </Select>
-        <Input
-          placeholder="Filter vendedor_id..."
-          value={(table.getColumn("vendedor_id")?.getFilterValue() as number) ?? ""}
-          onChange={(event) =>
-            table.getColumn("vendedor_id")?.setFilterValue(event.target.value)
-          }
-          className="max-w-40 mr-2"
-          />
-        <Input
-        placeholder="Filter cliente_id..."
-        value={(table.getColumn("cliente_id")?.getFilterValue() as number) ?? ""}
-        onChange={(event) =>
-          table.getColumn("cliente_id")?.setFilterValue(event.target.value)
-        }
-        className="max-w-40 mr-2"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) =>
-                    column.toggleVisibility(!!value)
-                  }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+          <Select onValueChange={(value) => table.getColumn("estado")?.setFilterValue(value)}>
+            <SelectTrigger className="max-w-40 mr-2">
+              <SelectValue placeholder="Estado" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="O">TODOS</SelectItem>
+              <SelectItem value="RECIBIDO">RECIBIDO</SelectItem>
+              <SelectItem value="ACEPTADO">ACEPTADO</SelectItem>
+              <SelectItem value="PREPARADO">PREPARADO</SelectItem>
+              <SelectItem value="ENVIADO">ENVIADO</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select onValueChange={(value) => table.getColumn("vendedor")?.setFilterValue(value === "all" ? "" : value)}>
+            <SelectTrigger className="max-w-40 mr-2">
+              <SelectValue placeholder="Vendedor" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">TODOS</SelectItem>
+              {vendedores.map(vendedor => (
+                <SelectItem key={vendedor.nombre} value={vendedor.nombre.toString()}>
+                  {vendedor.nombre}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select onValueChange={(value) => table.getColumn("cliente")?.setFilterValue(value === "all" ? "" : value)}>
+            <SelectTrigger className="max-w-40 mr-2">
+              <SelectValue placeholder="Cliente" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">TODOS</SelectItem>
+              {clientes.map(cliente => (
+                <SelectItem key={cliente.nombre} value={cliente.nombre.toString()}>
+                  {cliente.nombre}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
                   return (
-                    <TableHead key={header.id} className="text-center">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
                   )
                 })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="text-center">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} className="text-center">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                      </TableHead>
+                    )
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
                   >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="text-center">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
             >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
             >
-            Next
-          </Button>
+              Next
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
-    <EditarPedidoDialog open={editPedidoDialogData.open} pedidoData={editPedidoDialogData.pedido} closeEditDialog={closeEditDialog} triggerFetchData={triggerFetchData}/>
-    <EliminarPedidoDialog open={eliminarPedidoDialogData.open} pedidoData={eliminarPedidoDialogData.pedido} closeEliminarDialog={closeEliminarDialog} triggerFetchData={triggerFetchData}/>
+      <EditarPedidoDialog open={editPedidoDialogData.open} pedidoData={editPedidoDialogData.pedido} closeEditDialog={closeEditDialog} triggerFetchData={triggerFetchData} />
+      <EliminarPedidoDialog open={eliminarPedidoDialogData.open} pedidoData={eliminarPedidoDialogData.pedido} closeEliminarDialog={closeEliminarDialog} triggerFetchData={triggerFetchData} />
     </>
   )
 }

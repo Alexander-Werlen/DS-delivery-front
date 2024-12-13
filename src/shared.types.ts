@@ -127,7 +127,9 @@ type PedidoState = "RECIBIDO" | "ENVIADO" | "PREPARADO" | "ACEPTADO";
 export type Pedido = {
   id: number;
   pago: string | null;
+  vendedor: string,
   vendedor_id: number;
+  cliente: string,
   cliente_id: number;
   precio_total: number;
   estado: PedidoState;
