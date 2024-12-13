@@ -5,7 +5,10 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { useToast } from "@/hooks/use-toast"
-
+import { useEffect } from "react"
+import { getAllVendedores } from "@/services/vendedorService"
+import { Vendedor } from "../vendedores/tableVendedores"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -35,7 +38,8 @@ const formSchema = z.object({
     nombre: z.string(),
     descripcion: z.string(),
     precio: z.coerce.number().positive(),
-    vendedor: z.coerce.number(),
+    vendedor_id: z.coerce.number(),
+    vendedor: z.coerce.string(),
     esAptoVegano: z.boolean(),
     esAptoCeliaco: z.boolean(),
     volumen: z.coerce.number(),
@@ -52,6 +56,21 @@ function CrearBebidaDialog({triggerFetchData}: CrearBebidaDialogProps) {
     const { toast } = useToast()
 
     const [open, setOpen] = useState(false)
+    const [vendedores, setVendedores] = useState<Vendedor[]>([])
+
+    useEffect(() => {
+      // Fetch vendedores data
+      getAllVendedores().then(response => {
+        setVendedores(response.data)
+      }).catch(e => {
+        console.log(e)
+        toast({
+          variant: "destructive",
+          title: "Error cargando vendedores",
+          description: "No se pudieron cargar los vendedores del sistema",
+        })
+      })
+    }, [])
 
     // 1. Define your form.
     const form = useForm({
@@ -60,7 +79,8 @@ function CrearBebidaDialog({triggerFetchData}: CrearBebidaDialogProps) {
             nombre: "",
             descripcion: "",
             precio: 0,
-            vendedor: 0,
+            vendedor_id: 0,
+            vendedor: "",
             esAptoVegano: false,
             esAptoCeliaco: false,
             volumen: 0,
@@ -143,18 +163,29 @@ function CrearBebidaDialog({triggerFetchData}: CrearBebidaDialogProps) {
                 )}
                 />
                 <FormField
-                control={form.control}
-                name="vendedor"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Vendedor</FormLabel>
-                    <FormControl>
-                        <Input required placeholder="" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
+              control={form.control}
+              name="vendedor_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Vendedor</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange} defaultValue={field.value === 0 ? undefined : field.value.toString()}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar vendedor" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {vendedores.map(vendedor => (
+                          <SelectItem key={vendedor.id} value={vendedor.id.toString()}>
+                            {vendedor.nombre}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
                 <FormField
                 control={form.control}
                 name="volumen"

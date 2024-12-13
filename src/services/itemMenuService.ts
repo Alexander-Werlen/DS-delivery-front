@@ -40,7 +40,7 @@ export const editarBebida = (data: Bebida) => {
             "precio": data.precio,
             "categoria": "BEBIDA",
             "vendedor": {
-                "id": data.vendedor,
+                "id": data.vendedor_id,
             },
             "esAptoCeliaco": data.esAptoCeliaco,
             "esAptoVegano": data.esAptoVegano,
@@ -61,7 +61,7 @@ export const crearComida = (data: Comida) => {
             "precio": data.precio,
             "categoria": "BEBIDA",
             "vendedor": {
-                "id": data.vendedor,
+                "id": data.vendedor_id,
             },
             "esAptoCeliaco": data.esAptoCeliaco,
             "esAptoVegano": data.esAptoVegano,
@@ -79,7 +79,7 @@ export const editarComida = (data: Comida) => {
             "precio": data.precio,
             "categoria": "BEBIDA",
             "vendedor": {
-                "id": data.vendedor,
+                "id": data.vendedor_id,
             },
             "esAptoCeliaco": data.esAptoCeliaco,
             "esAptoVegano": data.esAptoVegano,

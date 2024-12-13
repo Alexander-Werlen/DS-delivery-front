@@ -47,7 +47,8 @@ export type ItemMenu = {
   descripcion: string,
   precio: number,
   categoria: "COMIDA" | "BEBIDA",
-  vendedor: number,
+  vendedor_id: number,
+  vendedor: string,
   esAptoVegano: boolean,
   esAptoCeliaco: boolean,
   peso: number | null,
@@ -63,7 +64,8 @@ export type Comida = {
   descripcion: string,
   precio: number,
   categoria: "COMIDA",
-  vendedor: number,
+  vendedor_id: number,
+  vendedor: string,
   esAptoVegano: boolean,
   esAptoCeliaco: boolean,
   peso: number,
@@ -75,7 +77,8 @@ export type Bebida = {
   descripcion: string,
   precio: number,
   categoria: "BEBIDA",
-  vendedor: number,
+  vendedor_id: number,
+  vendedor: string,
   esAptoVegano: boolean,
   esAptoCeliaco: boolean,
   volumen: number ,
@@ -100,7 +103,8 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
       descripcion: "",
       precio: 0,
       categoria: "COMIDA",
-      vendedor: -1,
+      vendedor_id: -1,
+      vendedor: "",
       esAptoVegano: false,
       esAptoCeliaco: false,
       peso: 0,
@@ -111,7 +115,8 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
       descripcion: "",
       precio: 0,
       categoria: "BEBIDA",
-      vendedor: -1,
+      vendedor_id: -1,
+      vendedor: "",
       esAptoVegano: false,
       esAptoCeliaco: false,
       volumen: 0,
@@ -133,7 +138,8 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
       descripcion: "",
       precio: 0,
       categoria: "BEBIDA",
-      vendedor: -1,
+      vendedor_id: -1,
+      vendedor: "",
       esAptoVegano: false,
       esAptoCeliaco: false,
       peso:0,
@@ -233,7 +239,7 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("categoria")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("categoria")}</div>,
     },
     {
       accessorKey: "vendedor",
@@ -243,12 +249,12 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Vendedor_Id
+            Vendedor
             <ArrowUpDown />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("vendedor")}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("vendedor")}</div>,
     },
     {
       accessorKey: "esAptoVegano",
@@ -258,12 +264,12 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            EsAptoVegano
+            AptoVegano
             <ArrowUpDown />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("esAptoVegano")?.toString()}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("esAptoVegano") ? "SI" : "NO"}</div>,
     },
     {
       accessorKey: "esAptoCeliaco",
@@ -273,12 +279,12 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            EsAptoCeliaco
+            AptoCeliaco
             <ArrowUpDown />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("esAptoCeliaco")?.toString()}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("esAptoCeliaco") ? "SI" : "NO"}</div>,
     },
     {
       accessorKey: "peso",
@@ -293,7 +299,7 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("peso")}</div>,
+      cell: ({ row }) => <div className="lowercase">{Number.parseFloat(row.getValue("peso")).toFixed(2) + "g"}</div>,
     },
     {
       accessorKey: "volumen",
@@ -308,7 +314,7 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("volumen")}</div>,
+      cell: ({ row }) => <div className="lowercase">{row.getValue("volumen") ? row.getValue("volumen") + "cc" : ""}</div>,
     },
     {
       accessorKey: "graduacionAlcoholica",
@@ -333,12 +339,12 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            EsAlcoholica
+            Alcoholica
             <ArrowUpDown />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("esAlcoholica")?.toString()}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("esAlcoholica") === true ? "X":row.getValue("esAlcoholica") === false ? "-" : ""}</div>,
     },
     {
       accessorKey: "esGaseosa",
@@ -348,12 +354,12 @@ export function DataTable({data, triggerFetchData}: DataTableProps) {
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            EsGaseosa
+            Gaseosa
             <ArrowUpDown />
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("esGaseosa")?.toString()}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("esGaseosa") === true ? "X":row.getValue("esGaseosa") === false ? "-" : ""}</div>,
     },
     
     {

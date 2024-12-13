@@ -3,9 +3,10 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
+import { getAllVendedores } from "@/services/vendedorService"
+import { useEffect } from "react"
 import { useToast } from "@/hooks/use-toast"
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue  } from "../ui/select"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -16,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-
+import { Vendedor } from "../vendedores/tableVendedores"
 import {
     Dialog,
     DialogClose,
@@ -35,7 +36,8 @@ const formSchema = z.object({
     nombre: z.string(),
     descripcion: z.string(),
     precio: z.coerce.number().positive(),
-    vendedor: z.coerce.number(),
+    vendedor_id: z.coerce.number(),
+    vendedor: z.coerce.string(),
     esAptoVegano: z.boolean(),
     esAptoCeliaco: z.boolean(),
     peso: z.coerce.number().positive(),
@@ -50,6 +52,20 @@ function CrearComidaDialog({triggerFetchData}: CrearComidaDialogProps) {
 
     const [open, setOpen] = useState(false)
 
+    const [vendedores, setVendedores] = useState<Vendedor[]>([])
+    useEffect(() => {
+        // Fetch vendedores data
+        getAllVendedores().then(response => {
+          setVendedores(response.data)
+        }).catch(e => {
+          console.log(e)
+          toast({
+            variant: "destructive",
+            title: "Error cargando vendedores",
+            description: "No se pudieron cargar los vendedores del sistema",
+          })
+        })
+      }, [])
     // 1. Define your form.
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -57,7 +73,8 @@ function CrearComidaDialog({triggerFetchData}: CrearComidaDialogProps) {
             nombre: "",
             descripcion: "",
             precio: 0,
-            vendedor: 0,
+            vendedor_id: 0,
+            vendedor: "",
             esAptoVegano: false,
             esAptoCeliaco: false,
             peso: 0,
@@ -137,18 +154,29 @@ function CrearComidaDialog({triggerFetchData}: CrearComidaDialogProps) {
                 )}
                 />
                 <FormField
-                control={form.control}
-                name="vendedor"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Vendedor</FormLabel>
-                    <FormControl>
-                        <Input required placeholder="" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    </FormItem>
-                )}
-                />
+              control={form.control}
+              name="vendedor_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Vendedor</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange} defaultValue={field.value === 0 ? undefined : field.value.toString()}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar vendedor" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {vendedores.map(vendedor => (
+                          <SelectItem key={vendedor.id} value={vendedor.id.toString()}>
+                            {vendedor.nombre}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
                 <FormField
                 control={form.control}
                 name="peso"
