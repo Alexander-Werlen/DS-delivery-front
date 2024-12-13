@@ -99,7 +99,7 @@ export default function FiltrosAvanzadosDialog({
                     control={form.control}
                     name="esAptoVegano"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-2">
+                      <FormItem className="flex flex-row items-start space-x-2 space-y-0">
                         <FormControl>
                           <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
@@ -112,7 +112,7 @@ export default function FiltrosAvanzadosDialog({
                     control={form.control}
                     name="esAptoCeliaco"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-2">
+                      <FormItem className="flex flex-row items-start space-x-2 space-y-0">
                         <FormControl>
                           <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
@@ -127,7 +127,7 @@ export default function FiltrosAvanzadosDialog({
                     control={form.control}
                     name="soloComidas"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-2">
+                      <FormItem className="flex flex-row items-start space-x-2 space-y-0">
                         <FormControl>
                           <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
@@ -140,7 +140,7 @@ export default function FiltrosAvanzadosDialog({
                     control={form.control}
                     name="soloBebidas"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-2">
+                      <FormItem className="flex flex-row items-start space-x-2 space-y-0">
                         <FormControl>
                           <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
@@ -223,7 +223,7 @@ export default function FiltrosAvanzadosDialog({
                   control={form.control}
                   name="esAlcoholica"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-2">
+                    <FormItem className="flex flex-row items-start space-x-2 space-y-0">
                       <FormControl>
                         <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                       </FormControl>
@@ -236,7 +236,7 @@ export default function FiltrosAvanzadosDialog({
                   control={form.control}
                   name="esGaseosa"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-2">
+                    <FormItem className="flex flex-row items-start space-x-2 space-y-0">
                       <FormControl>
                         <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                       </FormControl>
