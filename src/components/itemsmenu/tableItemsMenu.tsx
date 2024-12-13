@@ -13,8 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
-
+import { ArrowUpDown, ChevronDown, MoreHorizontal, Eraser,SlidersHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -60,6 +59,12 @@ export function DataTable({ data, triggerFetchData }: DataTableProps) {
       }
     }
     setAdvancedFilters(filters)
+  }
+  const clearFilters = () => {
+    // Clear column filters
+    table.resetColumnFilters()
+    // Reset advanced filters
+    setAdvancedFilters({})
   }
   useEffect(() => {
     triggerFetchData(advancedFilters)
@@ -436,13 +441,19 @@ export function DataTable({ data, triggerFetchData }: DataTableProps) {
             </SelectContent>
           </Select>
           <Button
-            variant="outline"
+            variant="ghost"
             className="ml-2"
             onClick={() => setShowFiltersDialog(true)}
           >
-            Filtros Avanzados
+            <SlidersHorizontal className="h-5 w-5" />
           </Button>
-
+          <Button
+            variant="ghost"
+            className="ml-2"
+            onClick={clearFilters}
+          >
+            <Eraser className="h-5 w-5 mr-2" />
+          </Button>
           <FiltrosAvanzadosDialog
             open={showFiltersDialog}
             closeDialog={() => setShowFiltersDialog(false)}

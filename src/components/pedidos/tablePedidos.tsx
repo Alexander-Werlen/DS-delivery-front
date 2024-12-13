@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal, Eraser } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -66,7 +66,12 @@ export function DataTable({ data, vendedores, clientes, triggerFetchData }: Data
       estado: "RECIBIDO"
     }
   })
-
+  const clearFilters = () => {
+    // Clear column filters
+    table.resetColumnFilters()
+    // Reset advanced filters
+    //setAdvancedFilters({})
+  }
   const closeEditDialog = () => {
     setEditPedidoDialogData(self => { return { open: false, pedido: self.pedido } })
   }
@@ -312,6 +317,13 @@ export function DataTable({ data, vendedores, clientes, triggerFetchData }: Data
               ))}
             </SelectContent>
           </Select>
+          <Button
+            variant="ghost"
+            className="ml-2"
+            onClick={clearFilters}
+          >
+            <Eraser className="h-5 w-5 mr-4" />
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">
