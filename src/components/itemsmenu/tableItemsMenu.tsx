@@ -288,7 +288,7 @@ export function DataTable({ data, triggerFetchData }: DataTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("graduacionAlcoholica")}</div>,
+      cell: ({ row }) => <div className="lowercase">{row.getValue("graduacionAlcoholica") ? row.getValue("graduacionAlcoholica") + "°" : undefined}</div>,
     },
     {
       accessorKey: "esAlcoholica",
