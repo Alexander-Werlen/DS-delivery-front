@@ -153,7 +153,7 @@ function EditarComidaDialog({ open, itemMenuData, closeEditDialog, triggerFetchD
                             name="precio"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Precio</FormLabel>
+                                    <FormLabel>Precio ($)</FormLabel>
                                     <FormControl>
                                         <Input required placeholder="" {...field} />
                                     </FormControl>
@@ -190,7 +190,7 @@ function EditarComidaDialog({ open, itemMenuData, closeEditDialog, triggerFetchD
                             name="peso"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Peso</FormLabel>
+                                    <FormLabel>Peso (g)</FormLabel>
                                     <FormControl>
                                         <Input required placeholder="" {...field} />
                                     </FormControl>

@@ -162,7 +162,7 @@ function EditarBebidaDialog({ open, itemMenuData, closeEditDialog, triggerFetchD
                             name="precio"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Precio</FormLabel>
+                                    <FormLabel>Precio ($)</FormLabel>
                                     <FormControl>
                                         <Input required placeholder="" {...field} />
                                     </FormControl>
@@ -199,7 +199,7 @@ function EditarBebidaDialog({ open, itemMenuData, closeEditDialog, triggerFetchD
                             name="volumen"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Volumen</FormLabel>
+                                    <FormLabel>Volumen (cc)</FormLabel>
                                     <FormControl>
                                         <Input required placeholder="" {...field} />
                                     </FormControl>
@@ -212,7 +212,7 @@ function EditarBebidaDialog({ open, itemMenuData, closeEditDialog, triggerFetchD
                             name="graduacionAlcoholica"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Graduacion Alcoholica</FormLabel>
+                                    <FormLabel>Graduacion Alcoholica (°)</FormLabel>
                                     <FormControl>
                                         <Input required placeholder="" {...field} />
                                     </FormControl>

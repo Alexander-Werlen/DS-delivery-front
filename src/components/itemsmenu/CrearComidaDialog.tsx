@@ -148,7 +148,7 @@ function CrearComidaDialog({ triggerFetchData }: CrearComidaDialogProps) {
                             name="precio"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Precio</FormLabel>
+                                    <FormLabel>Precio ($)</FormLabel>
                                     <FormControl>
                                         <Input required placeholder="" {...field} />
                                     </FormControl>
@@ -185,7 +185,7 @@ function CrearComidaDialog({ triggerFetchData }: CrearComidaDialogProps) {
                             name="peso"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Peso</FormLabel>
+                                    <FormLabel>Peso (g)</FormLabel>
                                     <FormControl>
                                         <Input required placeholder="" {...field} />
                                     </FormControl>

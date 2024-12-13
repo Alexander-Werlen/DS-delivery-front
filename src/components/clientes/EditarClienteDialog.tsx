@@ -170,7 +170,7 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
                 name="lat"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Lat</FormLabel>
+                    <FormLabel>Latitud (°)</FormLabel>
                     <FormControl>
                         <Input required placeholder="" {...field} />
                     </FormControl>
@@ -183,7 +183,7 @@ function EditarClienteDialog({open, clienteData, closeEditDialog, triggerFetchDa
                 name="lng"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel>Lng</FormLabel>
+                    <FormLabel>Longitud (°)</FormLabel>
                     <FormControl>
                         <Input required placeholder="" {...field} />
                     </FormControl>
