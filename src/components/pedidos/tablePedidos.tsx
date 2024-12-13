@@ -39,6 +39,7 @@ import EliminarPedidoDialog from "./EliminarPedidoDialog.tsx"
 import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select.tsx"
 import { Pedido } from "@/shared.types.ts"
+import EditarItemsFromPedidoDialog from "./EditarItemsFromPedidoDialog.tsx"
 
 type IdNamePair = {
   id: number,
@@ -53,6 +54,22 @@ interface DataTableProps {
 }
 
 export function DataTable({ data, vendedores, clientes, triggerFetchData }: DataTableProps) {
+  const [editItemsOfPedidoDialogData, setEditItemsOfPedidoDialogData] = useState<{ open: boolean, pedido: Pedido }>({
+    open: false,
+    pedido: {
+      id: -1,
+      pago: "",
+      vendedor_id: -1,
+      vendedor: "",
+      cliente: "",
+      cliente_id: -1,
+      precio_total: -1,
+      estado: "RECIBIDO"
+    }
+  })
+  const closeEditItemsOfPedidoDialog = () => {
+    setEditItemsOfPedidoDialogData(self => { return { open: false, pedido: self.pedido } })
+  }
   const [editPedidoDialogData, setEditPedidoDialogData] = useState<{ open: boolean, pedido: Pedido }>({
     open: false,
     pedido: {
@@ -236,6 +253,11 @@ export function DataTable({ data, vendedores, clientes, triggerFetchData }: Data
                 onClick={() => setEliminarPedidoDialogData({ open: true, pedido: pedido })}
               >
                 Eliminar
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setEditItemsOfPedidoDialogData({ open: true, pedido: pedido })} //TODO
+              >
+                Editar Items
               </DropdownMenuItem>
 
             </DropdownMenuContent>
@@ -441,6 +463,7 @@ export function DataTable({ data, vendedores, clientes, triggerFetchData }: Data
       </div>
       <EditarPedidoDialog open={editPedidoDialogData.open} pedidoData={editPedidoDialogData.pedido} closeEditDialog={closeEditDialog} triggerFetchData={triggerFetchData} />
       <EliminarPedidoDialog open={eliminarPedidoDialogData.open} pedidoData={eliminarPedidoDialogData.pedido} closeEliminarDialog={closeEliminarDialog} triggerFetchData={triggerFetchData} />
+      <EditarItemsFromPedidoDialog open={editItemsOfPedidoDialogData.open} pedidoData={editItemsOfPedidoDialogData.pedido} closeEditarItemsOfPedidoDialog={closeEditItemsOfPedidoDialog} triggerFetchData={triggerFetchData} />
     </>
   )
 }
