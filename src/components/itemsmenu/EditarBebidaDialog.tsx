@@ -87,6 +87,13 @@ function EditarBebidaDialog({ open, itemMenuData, closeEditDialog, triggerFetchD
             esGaseosa: itemMenuData.esGaseosa
         },
     })
+    const graduacionAlcoholica = form.watch("graduacionAlcoholica");
+
+    useEffect(() => {
+        if (graduacionAlcoholica > 0) {
+            form.setValue("esAlcoholica", true);
+        }
+    }, [graduacionAlcoholica, form]);
 
     useEffect(() => {
         form.reset(itemMenuData)
@@ -260,7 +267,8 @@ function EditarBebidaDialog({ open, itemMenuData, closeEditDialog, triggerFetchD
                                 <FormItem className="flex flex-row items-start space-x-2 space-y-0 ">
                                     <FormControl>
                                         <Checkbox
-                                            checked={field.value}
+                                            disabled={true}
+                                            checked={graduacionAlcoholica > 0 ? true : false}
                                             onCheckedChange={field.onChange}
                                         />
                                     </FormControl>
@@ -294,7 +302,7 @@ function EditarBebidaDialog({ open, itemMenuData, closeEditDialog, triggerFetchD
                             )}
                         />
 
-                        <Button type="submit" className="float-left w-32">CREAR</Button>
+                        <Button type="submit" className="float-left w-32">EDITAR</Button>
                         <DialogClose asChild className="float-right">
                             <Button type="button" className="w-32">
                                 CANCELAR

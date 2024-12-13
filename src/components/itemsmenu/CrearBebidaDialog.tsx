@@ -87,6 +87,13 @@ function CrearBebidaDialog({ triggerFetchData }: CrearBebidaDialogProps) {
             esGaseosa: false
         },
     })
+    const graduacionAlcoholica = form.watch("graduacionAlcoholica");
+
+    useEffect(() => {
+        if (graduacionAlcoholica > 0) {
+            form.setValue("esAlcoholica", true);
+        }
+    }, [graduacionAlcoholica, form]);
     // 2. Define a submit handler.
     function onSubmit(values: BebidaForm) {
         crearBebida({ ...values, "id": 0, "categoria": "BEBIDA" }).then(() => {
@@ -237,7 +244,8 @@ function CrearBebidaDialog({ triggerFetchData }: CrearBebidaDialogProps) {
                                 <FormItem className="flex flex-row items-start space-x-2 space-y-0 ">
                                     <FormControl>
                                         <Checkbox
-                                            checked={field.value}
+                                            disabled={graduacionAlcoholica > 0}
+                                            checked={graduacionAlcoholica > 0 ? true : false}
                                             onCheckedChange={field.onChange}
                                         />
                                     </FormControl>
