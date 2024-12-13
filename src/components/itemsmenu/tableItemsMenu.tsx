@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal, Eraser,SlidersHorizontal } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal, Eraser, SlidersHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -34,7 +34,7 @@ import {
 
 import EliminarItemMenuDialog from "./EliminarItemMenuDialog.tsx"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select.tsx"
 import EditarBebidaDialog from "./EditarBebidaDialog.tsx"
 import EditarComidaDialog from "./EditarComidaDialog.tsx"
@@ -60,10 +60,13 @@ export function DataTable({ data, triggerFetchData }: DataTableProps) {
     }
     setAdvancedFilters(filters)
   }
+  const categoriaSelectRef = useRef<HTMLButtonElement>(null)
   const clearFilters = () => {
     // Clear column filters
     table.resetColumnFilters()
-    // Reset advanced filters
+    if (categoriaSelectRef.current) {
+      categoriaSelectRef.current.textContent = "Categoria"
+    }
     setAdvancedFilters({})
   }
   useEffect(() => {
@@ -431,7 +434,7 @@ export function DataTable({ data, triggerFetchData }: DataTableProps) {
             className="max-w-40 mr-2"
           />
           <Select onValueChange={(value) => table.getColumn("categoria")?.setFilterValue(value)}>
-            <SelectTrigger className="w-40">
+            <SelectTrigger ref={categoriaSelectRef} className="w-40">
               <SelectValue placeholder="Categoria" />
             </SelectTrigger>
             <SelectContent>
