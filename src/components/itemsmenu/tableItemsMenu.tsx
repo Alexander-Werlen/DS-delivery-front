@@ -295,7 +295,7 @@ export function DataTable({ data, triggerFetchData }: DataTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("volumen") ? row.getValue("volumen") + "cc" : ""}</div>,
+      cell: ({ row }) => <div className="lowercase">{row.getValue("volumen") ? row.getValue("volumen") + "cc" :"-"}</div>,
     },
     {
       accessorKey: "graduacionAlcoholica",
@@ -310,7 +310,7 @@ export function DataTable({ data, triggerFetchData }: DataTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("graduacionAlcoholica") ? row.getValue("graduacionAlcoholica") + "°" : undefined}</div>,
+      cell: ({ row }) => <div className="lowercase">{row.getValue("graduacionAlcoholica") ? row.getValue("graduacionAlcoholica") + "°" : "-"}</div>,
     },
     {
       accessorKey: "esAlcoholica",
@@ -325,7 +325,7 @@ export function DataTable({ data, triggerFetchData }: DataTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="">{row.getValue("esAlcoholica") === true ? "X" : row.getValue("esAlcoholica") === false ? "-" : ""}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("esAlcoholica") === true ? "SI" : row.getValue("esAlcoholica") === false ? "NO" : "-"}</div>,
     },
     {
       accessorKey: "esGaseosa",
@@ -340,7 +340,7 @@ export function DataTable({ data, triggerFetchData }: DataTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="">{row.getValue("esGaseosa") === true ? "X" : row.getValue("esGaseosa") === false ? "-" : ""}</div>,
+      cell: ({ row }) => <div className="">{row.getValue("esGaseosa") === true ? "SI" : row.getValue("esGaseosa") === false ? "NO" : "-"}</div>,
     },
 
     {
