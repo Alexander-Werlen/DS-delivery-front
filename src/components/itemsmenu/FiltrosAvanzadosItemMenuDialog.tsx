@@ -175,7 +175,11 @@ export default function FiltrosAvanzadosDialog({
                       <FormItem>
                         <FormLabel>Precio máximo</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <Input type="number" {...field} onChange={(e) => {
+                            const value = e.target.value === '' ? undefined : Number(e.target.value)
+                            field.onChange(value)
+                          }}
+                            value={field.value ?? ''} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -203,7 +207,11 @@ export default function FiltrosAvanzadosDialog({
                       <FormItem>
                         <FormLabel>Peso máximo (g)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <Input type="number" {...field} onChange={(e) => {
+                            const value = e.target.value === '' ? undefined : Number(e.target.value)
+                            field.onChange(value)
+                          }}
+                            value={field.value ?? ''} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -270,7 +278,11 @@ export default function FiltrosAvanzadosDialog({
                       <FormItem>
                         <FormLabel>Volumen máximo (cc)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <Input type="number" {...field} onChange={(e) => {
+                            const value = e.target.value === '' ? undefined : Number(e.target.value)
+                            field.onChange(value)
+                          }}
+                            value={field.value ?? ''} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
