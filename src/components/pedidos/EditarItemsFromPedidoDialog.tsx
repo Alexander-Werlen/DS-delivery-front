@@ -110,6 +110,14 @@ export default function EditarItemsOfPedidoDialog({ open, pedidoData, isEditable
 
     }, [showAgregarItems])
 
+    // 1. Define your form.
+    const form = useForm<ItemPedidoForm>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            items: []
+        }
+    })
+    const { fields, replace, update } = useFieldArray({ name: "items", control: form.control });
     // Modified handleAddItems to properly update form
     const handleAddItems = (selectedItems: Array<{ item_menu_id: number, cantidad: number }>) => {
         const itemsToAdd = selectedItems.map(item => {
@@ -121,30 +129,22 @@ export default function EditarItemsOfPedidoDialog({ open, pedidoData, isEditable
                 visible: true
             }
         })
+        const items = form.getValues("items")
         itemsToAdd.forEach(item => {
-            //Add quantity to existing item if it exists
-            const existingItem = fields.find(i => i.item_menu_id === item.item_menu_id)
-            if (existingItem) {
-                existingItem.cantidad += item.cantidad
-                replace([...fields])
+            const existingIndex = fields.findIndex(i => i.item_menu_id === item.item_menu_id);
+            if (existingIndex !== -1) {
+                item.cantidad += items[existingIndex].cantidad
+                items[existingIndex] = item
             } else {
-                //Add new item if it doesn't exist
-                append(item)
+                items.push(item)
             }
-        })
+        });
+        replace(items)
+
         setShowAgregarItems(false)
 
     }
 
-    // 1. Define your form.
-    const form = useForm<ItemPedidoForm>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            items: []
-        }
-    })
-
-    const { fields, replace, update, append } = useFieldArray({ name: "items", control: form.control });
 
     useEffect(() => {
         if (open) {
