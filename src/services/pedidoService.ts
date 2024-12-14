@@ -22,6 +22,18 @@ export const editItemsOfPedido = (
         "cantidad": i.cantidad
     }}));
 }
+export const addItemsToPedido = (
+    id: number, 
+    items: {
+        item_menu_id: number;
+        cantidad: number;
+    }[]
+    ) => {
+    return api.post(`pedido/${id}/items`, items.map((i) => {return {
+        "itemMenuId": i.item_menu_id,
+        "cantidad": i.cantidad
+    }}));
+}
 
 export const deletePedido = (id: number) => {
     return api.delete(`pedido/${id}`);

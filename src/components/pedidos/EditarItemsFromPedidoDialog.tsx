@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useFieldArray, useForm } from "react-hook-form"
-
+import { AgregarItemsToPedidoDialog } from "./AgregarItemsToPedidoDialog"
 
 import {
     Form,
@@ -25,13 +25,14 @@ import {
     DialogTitle,
 } from "../generales/dialog"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
-import { Pedido } from "@/shared.types"
+import { ItemMenu, Pedido } from "@/shared.types"
 
 import { useToast } from "@/hooks/use-toast"
 
 import { getPedidoById, editItemsOfPedido } from "@/services/pedidoService"
+import { getAllItemsMenuFromVendedor } from "@/services/itemMenuService"
 
 import { ItemPedidoFormSchema, ItemPedidoForm } from "./schemas"
 import { Button } from "../ui/button"
@@ -46,7 +47,93 @@ interface EditarItemsOfPedidoDialogProps {
 const formSchema = ItemPedidoFormSchema
 
 export default function EditarItemsOfPedidoDialog({ open, pedidoData, closeEditarItemsOfPedidoDialog, triggerFetchData }: EditarItemsOfPedidoDialogProps) {
+    const [showAgregarItems, setShowAgregarItems] = useState(false)
+    const [availableItems, setAvailableItems] = useState<ItemMenu[]>([])
     const { toast } = useToast()
+
+    // Fetch available items when dialog opens
+    const fetchAvailableItems = async () => {
+        getAllItemsMenuFromVendedor(pedidoData.vendedor_id).then((response) => {
+            const itemsResponse: ItemMenu[] = []
+            response.data.bebidas.forEach((data) => {
+                itemsResponse.push({
+                    "id": data.id,
+                    "nombre": data.nombre,
+                    "descripcion": data.descripcion,
+                    "precio": data.precio,
+                    "categoria": "BEBIDA",
+                    "vendedor_id": data.vendedor?.id,
+                    "vendedor": data.vendedor?.nombre,
+                    "esAptoCeliaco": data.esAptoCeliaco,
+                    "esAptoVegano": data.esAptoVegano,
+                    "peso": data.peso,
+                    "volumen": data.volumen,
+                    "graduacionAlcoholica": data.graduacionAlcoholica,
+                    "esAlcoholica": data.esAlcoholica,
+                    "esGaseosa": data.esGaseosa
+                })
+            })
+            response.data.comidas.forEach((data) => {
+                itemsResponse.push({
+                    "id": data.id,
+                    "nombre": data.nombre,
+                    "descripcion": data.descripcion,
+                    "precio": data.precio,
+                    "categoria": "COMIDA",
+                    "vendedor_id": data.vendedor?.id,
+                    "vendedor": data.vendedor?.nombre,
+                    "esAptoCeliaco": data.esAptoCeliaco,
+                    "esAptoVegano": data.esAptoVegano,
+                    "peso": data.peso,
+                    "volumen": null,
+                    "graduacionAlcoholica": null,
+                    "esAlcoholica": null,
+                    "esGaseosa": null
+                })
+            })
+            setAvailableItems(itemsResponse)
+        }).catch(e => {
+            console.log(e)
+            toast({
+                variant: "destructive",
+                title: "Error cargando items menu",
+                description: "No se pudieron cargar los items menu del sistema",
+            })
+        })
+    }
+
+    useEffect(() => {
+        if (showAgregarItems) {
+            fetchAvailableItems()
+        }
+
+    }, [showAgregarItems])
+
+    // Modified handleAddItems to properly update form
+    const handleAddItems = (selectedItems: Array<{ item_menu_id: number, cantidad: number }>) => {
+        const itemsToAdd = selectedItems.map(item => {
+            const menuItem = availableItems.find(i => i.id === item.item_menu_id)
+            return {
+                item_menu_id: item.item_menu_id,
+                item_menu_nombre: menuItem?.nombre || "",
+                cantidad: item.cantidad,
+                visible: true
+            }
+        })
+        itemsToAdd.forEach(item => {
+            //Add quantity to existing item if it exists
+            const existingItem = fields.find(i => i.item_menu_id === item.item_menu_id)
+            if (existingItem) {
+                existingItem.cantidad += item.cantidad
+                replace([...fields])
+            } else {
+                //Add new item if it doesn't exist
+                append(item)
+            }
+        })
+        setShowAgregarItems(false)
+
+    }
 
     // 1. Define your form.
     const form = useForm<ItemPedidoForm>({
@@ -56,10 +143,11 @@ export default function EditarItemsOfPedidoDialog({ open, pedidoData, closeEdita
         }
     })
 
-    const { fields, replace, append, update } = useFieldArray({ name: "items", control: form.control });
+    const { fields, replace, update, append } = useFieldArray({ name: "items", control: form.control });
 
     useEffect(() => {
         if (open) {
+            console.log("Fetching items of pedido")
             getPedidoById(pedidoData.id).then(response => {
                 const items = response.data.items.map(item => {
                     return {
@@ -80,14 +168,6 @@ export default function EditarItemsOfPedidoDialog({ open, pedidoData, closeEdita
             })
         }
     }, [open])
-
-    const agregarItem = () => {
-        append({
-            "item_menu_id": 0,
-            "cantidad": 0,
-            "visible": true
-        })
-    }
 
     function onSubmit(values: ItemPedidoForm) {
         editItemsOfPedido(pedidoData.id, values.items).then(() => {
@@ -120,7 +200,7 @@ export default function EditarItemsOfPedidoDialog({ open, pedidoData, closeEdita
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         {fields.map((field, index) => (
-                            field.visible && ( // Only render if visible is true
+                            field.visible && (
                                 <div key={field.id} className="flex items-center space-x-4">
                                     <hr />
                                     <FormField
@@ -177,7 +257,13 @@ export default function EditarItemsOfPedidoDialog({ open, pedidoData, closeEdita
                             )
                         ))}
                         <Button type="submit" className="w-32">CONFIRMAR</Button>
-                        <Button type="button" className="w-32 ml-4" onClick={() => agregarItem()}>AGREGAR ITEMS</Button>
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={() => setShowAgregarItems(true)}
+                        >
+                            AGREGAR ITEMS
+                        </Button>
                         <DialogClose asChild className="float-right">
                             <Button type="button" className="w-32">
                                 CANCELAR
@@ -186,6 +272,13 @@ export default function EditarItemsOfPedidoDialog({ open, pedidoData, closeEdita
                     </form>
                 </Form>
             </DialogContent>
+            <AgregarItemsToPedidoDialog
+                open={showAgregarItems}
+                onClose={() => setShowAgregarItems(false)}
+                items={availableItems}
+                onAddItems={handleAddItems}
+            />
         </Dialog>
+
     )
 }

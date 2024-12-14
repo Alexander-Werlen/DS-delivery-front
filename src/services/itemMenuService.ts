@@ -8,6 +8,9 @@ export const getAllItemsMenu = (filter?: ItemMenuAdvancedFilters) => {
   }
   return api.get<MenuResponse>("/item-menu");
 };
+export const getAllItemsMenuFromVendedor = (vendedorId: number) => {
+  return api.get<MenuResponse>(`/item-menu/search?vendedorId=${vendedorId}`);
+};
 
 export const deleteItemMenu = (id: number) => {
   return api.delete(`/item-menu/${id}`);
