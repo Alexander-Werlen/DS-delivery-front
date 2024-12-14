@@ -54,8 +54,9 @@ interface DataTableProps {
 }
 
 export function DataTable({ data, vendedores, clientes, triggerFetchData }: DataTableProps) {
-  const [editItemsOfPedidoDialogData, setEditItemsOfPedidoDialogData] = useState<{ open: boolean, pedido: Pedido }>({
+  const [editItemsOfPedidoDialogData, setEditItemsOfPedidoDialogData] = useState<{ open: boolean, pedido: Pedido, isEditable: boolean }>({
     open: false,
+    isEditable: true,
     pedido: {
       id: -1,
       pago: "",
@@ -68,7 +69,7 @@ export function DataTable({ data, vendedores, clientes, triggerFetchData }: Data
     }
   })
   const closeEditItemsOfPedidoDialog = () => {
-    setEditItemsOfPedidoDialogData(self => { return { open: false, pedido: self.pedido } })
+    setEditItemsOfPedidoDialogData(self => { return { open: false, pedido: self.pedido, isEditable: self.isEditable } })
   }
   const [editPedidoDialogData, setEditPedidoDialogData] = useState<{ open: boolean, pedido: Pedido }>({
     open: false,
@@ -255,7 +256,7 @@ export function DataTable({ data, vendedores, clientes, triggerFetchData }: Data
                 Eliminar
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => setEditItemsOfPedidoDialogData({ open: true, pedido: pedido })} //TODO
+                onClick={() => setEditItemsOfPedidoDialogData({ open: true, pedido: pedido, isEditable: pedido.estado === 'RECIBIDO' })} //TODO
               >
                 Editar Items
               </DropdownMenuItem>
@@ -463,7 +464,7 @@ export function DataTable({ data, vendedores, clientes, triggerFetchData }: Data
       </div>
       <EditarPedidoDialog open={editPedidoDialogData.open} pedidoData={editPedidoDialogData.pedido} closeEditDialog={closeEditDialog} triggerFetchData={triggerFetchData} />
       <EliminarPedidoDialog open={eliminarPedidoDialogData.open} pedidoData={eliminarPedidoDialogData.pedido} closeEliminarDialog={closeEliminarDialog} triggerFetchData={triggerFetchData} />
-      <EditarItemsFromPedidoDialog open={editItemsOfPedidoDialogData.open} pedidoData={editItemsOfPedidoDialogData.pedido} closeEditarItemsOfPedidoDialog={closeEditItemsOfPedidoDialog} triggerFetchData={triggerFetchData} />
+      <EditarItemsFromPedidoDialog open={editItemsOfPedidoDialogData.open} pedidoData={editItemsOfPedidoDialogData.pedido} isEditable={editItemsOfPedidoDialogData.isEditable} closeEditarItemsOfPedidoDialog={closeEditItemsOfPedidoDialog} triggerFetchData={triggerFetchData} />
     </>
   )
 }

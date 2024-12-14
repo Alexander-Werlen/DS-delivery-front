@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useFieldArray, useForm } from "react-hook-form"
-
+import { AgregarItemsToPedidoDialog } from "./AgregarItemsToPedidoDialog"
 
 import {
     Form,
@@ -25,27 +25,90 @@ import {
     DialogTitle,
 } from "../generales/dialog"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
-import { Pedido } from "@/shared.types"
+import { ItemMenu, Pedido } from "@/shared.types"
 
 import { useToast } from "@/hooks/use-toast"
 
 import { getPedidoById, editItemsOfPedido } from "@/services/pedidoService"
+import { getAllItemsMenuFromVendedor } from "@/services/itemMenuService"
 
 import { ItemPedidoFormSchema, ItemPedidoForm } from "./schemas"
 import { Button } from "../ui/button"
+import { X } from "lucide-react"
 
 interface EditarItemsOfPedidoDialogProps {
     open: boolean,
     pedidoData: Pedido,
+    isEditable: boolean,
     closeEditarItemsOfPedidoDialog: () => void,
     triggerFetchData: () => void
 }
 const formSchema = ItemPedidoFormSchema
 
-export default function EditarItemsOfPedidoDialog({open, pedidoData, closeEditarItemsOfPedidoDialog, triggerFetchData}: EditarItemsOfPedidoDialogProps) {
+export default function EditarItemsOfPedidoDialog({ open, pedidoData, isEditable, closeEditarItemsOfPedidoDialog, triggerFetchData }: EditarItemsOfPedidoDialogProps) {
+    const [showAgregarItems, setShowAgregarItems] = useState(false)
+    const [availableItems, setAvailableItems] = useState<ItemMenu[]>([])
     const { toast } = useToast()
+
+    // Fetch available items when dialog opens
+    const fetchAvailableItems = async () => {
+        getAllItemsMenuFromVendedor(pedidoData.vendedor_id).then((response) => {
+            const itemsResponse: ItemMenu[] = []
+            response.data.bebidas.forEach((data) => {
+                itemsResponse.push({
+                    "id": data.id,
+                    "nombre": data.nombre,
+                    "descripcion": data.descripcion,
+                    "precio": data.precio,
+                    "categoria": "BEBIDA",
+                    "vendedor_id": data.vendedor?.id,
+                    "vendedor": data.vendedor?.nombre,
+                    "esAptoCeliaco": data.esAptoCeliaco,
+                    "esAptoVegano": data.esAptoVegano,
+                    "peso": data.peso,
+                    "volumen": data.volumen,
+                    "graduacionAlcoholica": data.graduacionAlcoholica,
+                    "esAlcoholica": data.esAlcoholica,
+                    "esGaseosa": data.esGaseosa
+                })
+            })
+            response.data.comidas.forEach((data) => {
+                itemsResponse.push({
+                    "id": data.id,
+                    "nombre": data.nombre,
+                    "descripcion": data.descripcion,
+                    "precio": data.precio,
+                    "categoria": "COMIDA",
+                    "vendedor_id": data.vendedor?.id,
+                    "vendedor": data.vendedor?.nombre,
+                    "esAptoCeliaco": data.esAptoCeliaco,
+                    "esAptoVegano": data.esAptoVegano,
+                    "peso": data.peso,
+                    "volumen": null,
+                    "graduacionAlcoholica": null,
+                    "esAlcoholica": null,
+                    "esGaseosa": null
+                })
+            })
+            setAvailableItems(itemsResponse)
+        }).catch(e => {
+            console.log(e)
+            toast({
+                variant: "destructive",
+                title: "Error cargando items menu",
+                description: "No se pudieron cargar los items menu del sistema",
+            })
+        })
+    }
+
+    useEffect(() => {
+        if (showAgregarItems) {
+            fetchAvailableItems()
+        }
+
+    }, [showAgregarItems])
 
     // 1. Define your form.
     const form = useForm<ItemPedidoForm>({
@@ -54,16 +117,45 @@ export default function EditarItemsOfPedidoDialog({open, pedidoData, closeEditar
             items: []
         }
     })
+    const { fields, replace, update } = useFieldArray({ name: "items", control: form.control });
+    // Modified handleAddItems to properly update form
+    const handleAddItems = (selectedItems: Array<{ item_menu_id: number, cantidad: number }>) => {
+        const itemsToAdd = selectedItems.map(item => {
+            const menuItem = availableItems.find(i => i.id === item.item_menu_id)
+            return {
+                item_menu_id: item.item_menu_id,
+                item_menu_nombre: menuItem?.nombre || "",
+                cantidad: item.cantidad,
+                visible: true
+            }
+        })
+        const items = form.getValues("items")
+        itemsToAdd.forEach(item => {
+            const existingIndex = fields.findIndex(i => i.item_menu_id === item.item_menu_id);
+            if (existingIndex !== -1) {
+                item.cantidad += items[existingIndex].cantidad
+                items[existingIndex] = item
+            } else {
+                items.push(item)
+            }
+        });
+        replace(items)
 
-    const { fields, replace, append } = useFieldArray({ name: "items", control: form.control });
+        setShowAgregarItems(false)
+
+    }
+
 
     useEffect(() => {
         if (open) {
+            console.log("Fetching items of pedido")
             getPedidoById(pedidoData.id).then(response => {
                 const items = response.data.items.map(item => {
                     return {
                         "item_menu_id": item.id.itemMenu.id,
-                        "cantidad": item.cantidad
+                        "item_menu_nombre": item.id.itemMenu.nombre,
+                        "cantidad": item.cantidad,
+                        "visible": true
                     }
                 })
                 replace(items)
@@ -77,13 +169,6 @@ export default function EditarItemsOfPedidoDialog({open, pedidoData, closeEditar
             })
         }
     }, [open])
-
-    const agregarItem = () => {
-        append({
-            "item_menu_id": 0,
-            "cantidad": 0
-        })
-    }
 
     function onSubmit(values: ItemPedidoForm) {
         editItemsOfPedido(pedidoData.id, values.items).then(() => {
@@ -103,7 +188,7 @@ export default function EditarItemsOfPedidoDialog({open, pedidoData, closeEditar
         })
         closeEditarItemsOfPedidoDialog()
     }
-    
+
     return (
         <Dialog open={open} onOpenChange={open ? closeEditarItemsOfPedidoDialog : () => { }}>
             <DialogContent className="max-h-screen overflow-y-auto">
@@ -114,50 +199,79 @@ export default function EditarItemsOfPedidoDialog({open, pedidoData, closeEditar
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        {
-                        fields.map((field, index) => (
-                            <div key={field.id}>
-                            <hr/>
-                            <FormField
-                            control={form.control}
-                            name={`items.${index}`}
-                            render={() => (
-                              <>
-                                <FormItem>
-                                  <FormLabel>Item Menu Id</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      {...form.register(`items.${index}.item_menu_id`)}
-                                      // defaultValue={field.name}
-                                      // value={field.value.city}
-                                      // onChange={(e) => field.onChange(e.target.value)}
-                                      // onBlur={(e) => field.onBlur(e.target.value)}
+                    <form onSubmit={isEditable ? form.handleSubmit(onSubmit) : (e) => e.preventDefault()} className="space-y-4">
+                        {fields.map((field, index) => (
+                            field.visible && (
+                                <div key={field.id} className="flex items-center space-x-4">
+                                    <hr />
+                                    <FormField
+                                        control={form.control}
+                                        name={`items.${index}`}
+                                        render={() => (
+                                            <>
+                                                <div className="flex space-x-4 flex-1">
+                                                    <FormItem className="flex-1">
+                                                        <FormLabel>Item</FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                value={field.item_menu_nombre}
+                                                                readOnly
+                                                                className="cursor-default focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none"
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                    <FormItem className="flex-1">
+                                                        <FormLabel>Cantidad</FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                type="number"
+                                                                min={0}
+                                                                {...form.register(`items.${index}.cantidad`)}
+                                                                disabled={!isEditable}
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                    <Input
+                                                        type="hidden"
+                                                        {...form.register(`items.${index}.item_menu_id`)}
+                                                    />
+                                                </div>
+                                                {isEditable && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        type="button"
+                                                        className="ml-2"
+                                                        onClick={() => {
+                                                            update(index, {
+                                                                ...field,
+                                                                cantidad: 0,
+                                                                visible: false
+                                                            });
+                                                        }}
+                                                    >
+                                                        <X />
+                                                    </Button>
+                                                )}
+                                            </>
+                                        )}
                                     />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                                <FormItem>
-                                  <FormLabel>Cantidad</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      {...form.register(`items.${index}.cantidad`)}
-                                      // defaultValue={field.name}
-                                      // value={field.value.city}
-                                      // onChange={(e) => field.onChange(e.target.value)}
-                                      // onBlur={(e) => field.onBlur(e.target.value)}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              </>
-                            )}
-                            />
-                            </div>
-                        ))
-                        }
-                        <Button type="submit" className="w-32">EDITAR</Button>
-                        <Button type="button" className="w-32 ml-4" onClick={() => agregarItem()}>AGREGAR ITEM</Button>
+                                </div>
+                            )
+                        ))}
+                        {isEditable && (
+                            <>
+                                <Button type="submit" className="w-32">CONFIRMAR</Button>
+                                <Button
+                                    type="button"
+                                    variant="secondary"
+                                    onClick={() => setShowAgregarItems(true)}
+                                >
+                                    AGREGAR ITEMS
+                                </Button>
+                            </>
+                        )}
                         <DialogClose asChild className="float-right">
                             <Button type="button" className="w-32">
                                 CANCELAR
@@ -166,7 +280,13 @@ export default function EditarItemsOfPedidoDialog({open, pedidoData, closeEditar
                     </form>
                 </Form>
             </DialogContent>
+            <AgregarItemsToPedidoDialog
+                open={showAgregarItems}
+                onClose={() => setShowAgregarItems(false)}
+                items={availableItems}
+                onAddItems={handleAddItems}
+            />
         </Dialog>
+
     )
 }
-  

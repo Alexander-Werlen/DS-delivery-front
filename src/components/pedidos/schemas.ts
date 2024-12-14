@@ -26,6 +26,8 @@ export const ItemPedidoFormSchema = z.object({
   items: z.array(
     z.object({
       item_menu_id: z.coerce.number(),
+      item_menu_nombre: z.string().optional(),
+      visible: z.boolean().optional(),
       cantidad: z.coerce.number().min(0, {message: "La cantidad no puede ser negativa."}),
     })
   )

@@ -160,9 +160,18 @@ export default function FiltrosAvanzadosDialog({
                     name="precioMin"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Precio mínimo</FormLabel>
+                        <FormLabel>Precio mínimo ($)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <Input
+                            type="number"
+                            min="0"
+                            {...field}
+                            onChange={(e) => {
+                              const value = e.target.value === '' ? undefined : Number(e.target.value)
+                              field.onChange(value)
+                            }}
+                            value={field.value ?? ''}
+                          />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -173,9 +182,13 @@ export default function FiltrosAvanzadosDialog({
                     name="precioMax"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Precio máximo</FormLabel>
+                        <FormLabel>Precio máximo ($)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <Input type="number" {...field} onChange={(e) => {
+                            const value = e.target.value === '' ? undefined : Number(e.target.value)
+                            field.onChange(value)
+                          }}
+                            value={field.value ?? ''} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -190,7 +203,16 @@ export default function FiltrosAvanzadosDialog({
                       <FormItem>
                         <FormLabel>Peso mínimo (g)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <Input
+                            type="number"
+                            min="0"
+                            {...field}
+                            onChange={(e) => {
+                              const value = e.target.value === '' ? undefined : Number(e.target.value)
+                              field.onChange(value)
+                            }}
+                            value={field.value ?? ''}
+                          />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -203,7 +225,11 @@ export default function FiltrosAvanzadosDialog({
                       <FormItem>
                         <FormLabel>Peso máximo (g)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <Input type="number" {...field} onChange={(e) => {
+                            const value = e.target.value === '' ? undefined : Number(e.target.value)
+                            field.onChange(value)
+                          }}
+                            value={field.value ?? ''} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -257,7 +283,16 @@ export default function FiltrosAvanzadosDialog({
                       <FormItem>
                         <FormLabel>Volumen mínimo (cc)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <Input
+                            type="number"
+                            min="0"
+                            {...field}
+                            onChange={(e) => {
+                              const value = e.target.value === '' ? undefined : Number(e.target.value)
+                              field.onChange(value)
+                            }}
+                            value={field.value ?? ''}
+                          />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -270,7 +305,11 @@ export default function FiltrosAvanzadosDialog({
                       <FormItem>
                         <FormLabel>Volumen máximo (cc)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <Input type="number" {...field} onChange={(e) => {
+                            const value = e.target.value === '' ? undefined : Number(e.target.value)
+                            field.onChange(value)
+                          }}
+                            value={field.value ?? ''} />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -285,7 +324,16 @@ export default function FiltrosAvanzadosDialog({
                       <FormItem>
                         <FormLabel>Graduación mínima (°)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <Input
+                            type="number"
+                            min="0"
+                            {...field}
+                            onChange={(e) => {
+                              const value = e.target.value === '' ? undefined : Number(e.target.value)
+                              field.onChange(value)
+                            }}
+                            value={field.value ?? ''}
+                          />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
@@ -298,7 +346,16 @@ export default function FiltrosAvanzadosDialog({
                       <FormItem>
                         <FormLabel>Graduación máxima (°)</FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} />
+                          <Input
+                            type="number"
+                            max="100"
+                            {...field}
+                            onChange={(e) => {
+                              const value = e.target.value === '' ? undefined : Number(e.target.value)
+                              field.onChange(value)
+                            }}
+                            value={field.value ?? ''}
+                          />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
