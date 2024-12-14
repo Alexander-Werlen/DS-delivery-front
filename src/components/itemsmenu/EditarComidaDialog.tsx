@@ -151,11 +151,11 @@ function EditarComidaDialog({ open, itemMenuData, closeEditDialog, triggerFetchD
                         <FormField
                             control={form.control}
                             name="precio"
-                            render={({ fieInputld }) => (
+                            render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Precio ($)</FormLabel>
                                     <FormControl>
-                                        < required placeholder="" {...field} />
+                                        <Input required placeholder="" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
