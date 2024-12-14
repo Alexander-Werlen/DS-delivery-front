@@ -41,12 +41,13 @@ import { X } from "lucide-react"
 interface EditarItemsOfPedidoDialogProps {
     open: boolean,
     pedidoData: Pedido,
+    isEditable: boolean,
     closeEditarItemsOfPedidoDialog: () => void,
     triggerFetchData: () => void
 }
 const formSchema = ItemPedidoFormSchema
 
-export default function EditarItemsOfPedidoDialog({ open, pedidoData, closeEditarItemsOfPedidoDialog, triggerFetchData }: EditarItemsOfPedidoDialogProps) {
+export default function EditarItemsOfPedidoDialog({ open, pedidoData, isEditable, closeEditarItemsOfPedidoDialog, triggerFetchData }: EditarItemsOfPedidoDialogProps) {
     const [showAgregarItems, setShowAgregarItems] = useState(false)
     const [availableItems, setAvailableItems] = useState<ItemMenu[]>([])
     const { toast } = useToast()
@@ -198,7 +199,7 @@ export default function EditarItemsOfPedidoDialog({ open, pedidoData, closeEdita
                     </DialogDescription>
                 </DialogHeader>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={isEditable ? form.handleSubmit(onSubmit) : (e) => e.preventDefault()} className="space-y-4">
                         {fields.map((field, index) => (
                             field.visible && (
                                 <div key={field.id} className="flex items-center space-x-4">
@@ -227,6 +228,7 @@ export default function EditarItemsOfPedidoDialog({ open, pedidoData, closeEdita
                                                                 type="number"
                                                                 min={0}
                                                                 {...form.register(`items.${index}.cantidad`)}
+                                                                disabled={!isEditable}
                                                             />
                                                         </FormControl>
                                                         <FormMessage />
@@ -256,14 +258,26 @@ export default function EditarItemsOfPedidoDialog({ open, pedidoData, closeEdita
                                 </div>
                             )
                         ))}
-                        <Button type="submit" className="w-32">CONFIRMAR</Button>
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            onClick={() => setShowAgregarItems(true)}
-                        >
-                            AGREGAR ITEMS
-                        </Button>
+                        {isEditable ? (
+                            <>
+                                <Button type="submit" className="w-32">CONFIRMAR</Button>
+                                <Button
+                                    type="button"
+                                    variant="secondary"
+                                    onClick={() => setShowAgregarItems(true)}
+                                >
+                                    AGREGAR ITEMS
+                                </Button>
+                            </>
+                        ) : (
+                            <Button
+                                type="button"
+                                className="w-32"
+                                onClick={closeEditarItemsOfPedidoDialog}
+                            >
+                                SALIR
+                            </Button>
+                        )}
                         <DialogClose asChild className="float-right">
                             <Button type="button" className="w-32">
                                 CANCELAR
