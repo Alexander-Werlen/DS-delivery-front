@@ -35,6 +35,7 @@ import { getPedidoById, editItemsOfPedido } from "@/services/pedidoService"
 
 import { ItemPedidoFormSchema, ItemPedidoForm } from "./schemas"
 import { Button } from "../ui/button"
+import { X } from "lucide-react"
 
 interface EditarItemsOfPedidoDialogProps {
     open: boolean,
@@ -44,7 +45,7 @@ interface EditarItemsOfPedidoDialogProps {
 }
 const formSchema = ItemPedidoFormSchema
 
-export default function EditarItemsOfPedidoDialog({open, pedidoData, closeEditarItemsOfPedidoDialog, triggerFetchData}: EditarItemsOfPedidoDialogProps) {
+export default function EditarItemsOfPedidoDialog({ open, pedidoData, closeEditarItemsOfPedidoDialog, triggerFetchData }: EditarItemsOfPedidoDialogProps) {
     const { toast } = useToast()
 
     // 1. Define your form.
@@ -55,7 +56,7 @@ export default function EditarItemsOfPedidoDialog({open, pedidoData, closeEditar
         }
     })
 
-    const { fields, replace, append } = useFieldArray({ name: "items", control: form.control });
+    const { fields, replace, append, update } = useFieldArray({ name: "items", control: form.control });
 
     useEffect(() => {
         if (open) {
@@ -63,7 +64,9 @@ export default function EditarItemsOfPedidoDialog({open, pedidoData, closeEditar
                 const items = response.data.items.map(item => {
                     return {
                         "item_menu_id": item.id.itemMenu.id,
-                        "cantidad": item.cantidad
+                        "item_menu_nombre": item.id.itemMenu.nombre,
+                        "cantidad": item.cantidad,
+                        "visible": true
                     }
                 })
                 replace(items)
@@ -81,7 +84,8 @@ export default function EditarItemsOfPedidoDialog({open, pedidoData, closeEditar
     const agregarItem = () => {
         append({
             "item_menu_id": 0,
-            "cantidad": 0
+            "cantidad": 0,
+            "visible": true
         })
     }
 
@@ -103,7 +107,7 @@ export default function EditarItemsOfPedidoDialog({open, pedidoData, closeEditar
         })
         closeEditarItemsOfPedidoDialog()
     }
-    
+
     return (
         <Dialog open={open} onOpenChange={open ? closeEditarItemsOfPedidoDialog : () => { }}>
             <DialogContent className="max-h-screen overflow-y-auto">
@@ -115,49 +119,65 @@ export default function EditarItemsOfPedidoDialog({open, pedidoData, closeEditar
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        {
-                        fields.map((field, index) => (
-                            <div key={field.id}>
-                            <hr/>
-                            <FormField
-                            control={form.control}
-                            name={`items.${index}`}
-                            render={() => (
-                              <>
-                                <FormItem>
-                                  <FormLabel>Item Menu Id</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      {...form.register(`items.${index}.item_menu_id`)}
-                                      // defaultValue={field.name}
-                                      // value={field.value.city}
-                                      // onChange={(e) => field.onChange(e.target.value)}
-                                      // onBlur={(e) => field.onBlur(e.target.value)}
+                        {fields.map((field, index) => (
+                            field.visible && ( // Only render if visible is true
+                                <div key={field.id} className="flex items-center space-x-4">
+                                    <hr />
+                                    <FormField
+                                        control={form.control}
+                                        name={`items.${index}`}
+                                        render={() => (
+                                            <>
+                                                <div className="flex space-x-4 flex-1">
+                                                    <FormItem className="flex-1">
+                                                        <FormLabel>Item</FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                value={field.item_menu_nombre}
+                                                                readOnly
+                                                                className="cursor-default focus-visible:ring-0 focus-visible:ring-offset-0 focus:outline-none"
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                    <FormItem className="flex-1">
+                                                        <FormLabel>Cantidad</FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                type="number"
+                                                                min={0}
+                                                                {...form.register(`items.${index}.cantidad`)}
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                    <Input
+                                                        type="hidden"
+                                                        {...form.register(`items.${index}.item_menu_id`)}
+                                                    />
+                                                </div>
+                                                <Button
+                                                    variant="ghost"
+                                                    type="button"
+                                                    className="ml-2"
+                                                    onClick={() => {
+                                                        update(index, {
+                                                            ...field,
+                                                            cantidad: 0,
+                                                            visible: false
+                                                        });
+                                                    }}
+                                                >
+                                                    <X />
+                                                </Button>
+                                            </>
+                                        )}
                                     />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                                <FormItem>
-                                  <FormLabel>Cantidad</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      {...form.register(`items.${index}.cantidad`)}
-                                      // defaultValue={field.name}
-                                      // value={field.value.city}
-                                      // onChange={(e) => field.onChange(e.target.value)}
-                                      // onBlur={(e) => field.onBlur(e.target.value)}
-                                    />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              </>
-                            )}
-                            />
-                            </div>
-                        ))
-                        }
-                        <Button type="submit" className="w-32">EDITAR</Button>
-                        <Button type="button" className="w-32 ml-4" onClick={() => agregarItem()}>AGREGAR ITEM</Button>
+                                </div>
+                            )
+                        ))}
+                        <Button type="submit" className="w-32">CONFIRMAR</Button>
+                        <Button type="button" className="w-32 ml-4" onClick={() => agregarItem()}>AGREGAR ITEMS</Button>
                         <DialogClose asChild className="float-right">
                             <Button type="button" className="w-32">
                                 CANCELAR
@@ -169,4 +189,3 @@ export default function EditarItemsOfPedidoDialog({open, pedidoData, closeEditar
         </Dialog>
     )
 }
-  
