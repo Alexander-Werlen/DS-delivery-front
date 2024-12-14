@@ -238,27 +238,29 @@ export default function EditarItemsOfPedidoDialog({ open, pedidoData, isEditable
                                                         {...form.register(`items.${index}.item_menu_id`)}
                                                     />
                                                 </div>
-                                                <Button
-                                                    variant="ghost"
-                                                    type="button"
-                                                    className="ml-2"
-                                                    onClick={() => {
-                                                        update(index, {
-                                                            ...field,
-                                                            cantidad: 0,
-                                                            visible: false
-                                                        });
-                                                    }}
-                                                >
-                                                    <X />
-                                                </Button>
+                                                {isEditable && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        type="button"
+                                                        className="ml-2"
+                                                        onClick={() => {
+                                                            update(index, {
+                                                                ...field,
+                                                                cantidad: 0,
+                                                                visible: false
+                                                            });
+                                                        }}
+                                                    >
+                                                        <X />
+                                                    </Button>
+                                                )}
                                             </>
                                         )}
                                     />
                                 </div>
                             )
                         ))}
-                        {isEditable ? (
+                        {isEditable && (
                             <>
                                 <Button type="submit" className="w-32">CONFIRMAR</Button>
                                 <Button
@@ -269,14 +271,6 @@ export default function EditarItemsOfPedidoDialog({ open, pedidoData, isEditable
                                     AGREGAR ITEMS
                                 </Button>
                             </>
-                        ) : (
-                            <Button
-                                type="button"
-                                className="w-32"
-                                onClick={closeEditarItemsOfPedidoDialog}
-                            >
-                                SALIR
-                            </Button>
                         )}
                         <DialogClose asChild className="float-right">
                             <Button type="button" className="w-32">
