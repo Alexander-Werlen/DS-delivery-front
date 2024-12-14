@@ -3,6 +3,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../generales/d
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {
   Table,
   TableBody,
   TableCell,
@@ -59,19 +65,40 @@ export function AgregarItemsToPedidoDialog({ open, onClose, items, onAddItems }:
             <TableHeader>
               <TableRow>
                 <TableHead>Nombre</TableHead>
-                <TableHead>Descripción</TableHead>
+                <TableHead className="hidden">Descripción</TableHead>
                 <TableHead>Precio</TableHead>
                 <TableHead>Categoria</TableHead>
+                <TableHead>Peso</TableHead>
+                <TableHead>Apto Vegano</TableHead>
+                <TableHead>Apto Celiaco</TableHead>
+                <TableHead>Alcoholica</TableHead>
+                <TableHead>Gaseosa</TableHead>
+                <TableHead>Volumen</TableHead>
                 <TableHead>Cantidad</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {items.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell>{item.nombre}</TableCell>
-                  <TableCell>{item.descripcion}</TableCell>
+                  <TableCell>
+                    <TooltipProvider delayDuration={100}>
+                      <Tooltip>
+                        <TooltipTrigger>{item.nombre}</TooltipTrigger>
+                        <TooltipContent>
+                          <p>{item.descripcion}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </TableCell>
+                  <TableCell className="hidden">{item.descripcion}</TableCell>
                   <TableCell>{new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" }).format(item.precio)}</TableCell>
                   <TableCell>{item.categoria}</TableCell>
+                  <TableCell>{item.peso.toFixed(2) + "g"}</TableCell>
+                  <TableCell>{item.esAptoVegano ? "SI" : item.esAptoVegano === false ? "NO" : undefined}</TableCell>
+                  <TableCell>{item.esAptoCeliaco ? "SI" : item.esAptoCeliaco === false ? "NO" : undefined}</TableCell>
+                  <TableCell>{item.esAlcoholica ? "SI" : item.esAlcoholica === false ? "NO" : "-"}</TableCell>
+                  <TableCell>{item.esGaseosa ? "SI" : item.esGaseosa === false ? "NO" : "-"}</TableCell>
+                  <TableCell>{item.volumen ? item.volumen + "cc" : '-'}</TableCell>
                   <TableCell>
                     <Input
                       type="number"
@@ -87,10 +114,10 @@ export function AgregarItemsToPedidoDialog({ open, onClose, items, onAddItems }:
           </Table>
         </div>
         <div className="flex justify-end gap-4 mt-4">
-          <Button onClick={onClose} variant="outline">Cancelar</Button>
           <Button onClick={handleAddItems} disabled={selectedItems.size === 0}>
             Agregar
           </Button>
+          <Button onClick={onClose} variant="outline">Cancelar</Button>
         </div>
       </DialogContent>
     </Dialog>

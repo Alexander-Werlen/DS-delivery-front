@@ -89,7 +89,7 @@ export type ItemMenu = {
   vendedor: string;
   esAptoVegano: boolean;
   esAptoCeliaco: boolean;
-  peso: number | null;
+  peso: number;
   volumen: number | null;
   graduacionAlcoholica: number | null;
   esAlcoholica: boolean | null;
